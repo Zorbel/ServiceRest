@@ -22,6 +22,13 @@ Route::controllers([
 
 // Political program data functions
 
+Route::group(['prefix' => 'PoliticalParty'], function()
+{
+	Route::get('/', 'PoliticalPartyController@index');
+	
+	Route::get('/{id}', 'PoliticalPartyController@show');
+});
+
 Route::group(['prefix' => 'getPoliticalProgram'], function()
 {
 	Route::get('/{id}', 'PoliticalProgramController@show');
