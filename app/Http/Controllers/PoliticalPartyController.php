@@ -15,7 +15,15 @@ class PoliticalPartyController extends Controller {
 	 */
 	public function index()
 	{
-		return DB::select('select `id`, `name` FROM `political_party`');
+		$results = DB::select('select `id`, `name`, `logo` FROM `political_party` ORDER BY `name`');
+		$i = 0;
+
+		foreach ($results as $value) {
+			$list[$i] = array("id" => $value->id, "name" => $value->name, "logo" => base64_encode($value->logo));
+			$i++;
+		}
+
+		return response()->json($list);
 	}
 
 	/**
@@ -46,7 +54,7 @@ class PoliticalPartyController extends Controller {
 	 */
 	public function show($id)
 	{
-		return DB::selec('select `id`, `name` FROM `political_party` WHERE ´id´ = ?', array($id));
+		//
 	}
 
 	/**
