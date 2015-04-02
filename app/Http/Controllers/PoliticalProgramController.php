@@ -46,35 +46,23 @@ class PoliticalProgramController extends Controller {
 	 */
 	public function show($id)
 	{
-		return DB::select('select `section`, `title` FROM `section` WHERE `id_political_party` = ?', array($id));
-	}
-
-	private function showSections($section, $finalList)
-	{
-		$results = DB::select('select `title`, `section`, `section_parent` FROM `section` WHERE `section_parent` = ?', array($section->section_parent));
-		//print_r($results);
-		if (is_null($results))
-			return $finalList;
-		else
-		{
-			for ($i = 0; $i < count($results); $i++)
-			{
-				$finalList = $finalList + $results[$i];
-				PoliticalProgramController::showSections($results[$i], $finalList);
-			}
-			return $finalList;
-		}
+		//
 	}
 
 	/**
-	* Display the table of contents of the section param
-	* @param int $id
-	* @param string $section_parent
+	* Display the table of contents of the section
 	* @reutrn Response
 	*/
-	public function showSection($id, $section_parent)
+	public function showSection()
 	{
-		return DB::select('select `title` FROM `section` WHERE `id_political_party` = ? AND `section_parent` = ?', array($id, $section_parent));
+		$section = Input::get('section');
+		$id_political_party = Input::get('id_political_party');
+
+		$result1 = DB::select('select `section`, `title`, `likes`, `not_understood`, `unlikes` FROM `section` WHERE `id_political_party` = ? AND `section` = ?', array($id_political_party, $section));
+		$result2 = DB::select('select COUNT(*) FROM `comment` WHERE `id_political_party` = ? AND `section` = ?', array($id_political_party, $section));
+
+		$finalResult = $arrayName = array('section' => $result1->section, 'title' => $result1->title, 'likes' => $result1->likes, 'not_understood' => $result1->not_understood, 'unlikes' => $result1->unlikes, 'comments' => $result2);
+		return response()->json($finalResult);
 	}
 
 	public function showSectionText($id_political_party, $section)
