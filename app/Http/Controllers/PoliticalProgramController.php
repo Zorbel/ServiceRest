@@ -58,10 +58,10 @@ class PoliticalProgramController extends Controller {
 		$section = Input::get('section');
 		$id_political_party = Input::get('id_political_party');
 
-		$result1 = DB::select('select `section`, `title`, `likes`, `not_understood`, `unlikes` FROM `section` WHERE `id_political_party` = ? AND `section` = ?', array($id_political_party, $section));
+		$result1 = DB::select('select `section`, `title`, `text`, `likes`, `not_understood`, `unlikes` FROM `section` WHERE `id_political_party` = ? AND `section` = ?', array($id_political_party, $section));
 		$result2 = DB::select('select COUNT(*) FROM `comment` WHERE `id_political_party` = ? AND `section` = ?', array($id_political_party, $section));
 
-		$finalResult = $arrayName = array('section' => $result1->section, 'title' => $result1->title, 'likes' => $result1->likes, 'not_understood' => $result1->not_understood, 'unlikes' => $result1->unlikes, 'comments' => $result2);
+		$finalResult = $arrayName = array('section' => $result1->section, 'title' => $result1->title, 'text' => $result1->text, 'likes' => $result1->likes, 'not_understood' => $result1->not_understood, 'unlikes' => $result1->unlikes, 'comments' => $result2);
 		return response()->json($finalResult);
 	}
 
