@@ -46,7 +46,7 @@ class PoliticalProgramController extends Controller {
 	 */
 	public function show($id)
 	{
-		//
+		return DB::select('select `title`, `section` FROM `section` WHERE `id_political_party` = ?', array($id));
 	}
 
 	/**
