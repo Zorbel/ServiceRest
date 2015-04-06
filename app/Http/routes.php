@@ -33,7 +33,7 @@ Route::group(['prefix' => 'getPoliticalProgram'], function()
 {
 	Route::get('/{id}', 'PoliticalProgramController@show');
 	
-	Route::post('/', 'PoliticalProgramController@showSection');
+	Route::get('/{id_political_party}/{section}', 'PoliticalProgramController@showSection');
 	
 	Route::get('/{id_political_party}/{section}/getContent', 'PoliticalProgramController@showSectionText');
 });

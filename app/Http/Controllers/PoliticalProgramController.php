@@ -37,7 +37,7 @@ class PoliticalProgramController extends Controller {
 	{
 		//
 	}
-
+	
 	/**
 	 * Display the specified resource.
 	 *
@@ -53,15 +53,12 @@ class PoliticalProgramController extends Controller {
 	* Display the table of contents of the section
 	* @reutrn Response
 	*/
-	public function showSection()
+	public function showSection($id_political_party, $section)
 	{
-		$section = Input::get('section');
-		$id_political_party = Input::get('id_political_party');
-
 		$result1 = DB::select('select `section`, `title`, `text`, `likes`, `not_understood`, `unlikes` FROM `section` WHERE `id_political_party` = ? AND `section` = ?', array($id_political_party, $section));
-		$result2 = DB::select('select COUNT(*) FROM `comment` WHERE `id_political_party` = ? AND `section` = ?', array($id_political_party, $section));
+		$result2 = DB::select('select COUNT(*) as comments FROM `comment` WHERE `id_political_party` = ? AND `section` = ?', array($id_political_party, $section));
 
-		$finalResult = $arrayName = array('section' => $result1->section, 'title' => $result1->title, 'text' => $result1->text, 'likes' => $result1->likes, 'not_understood' => $result1->not_understood, 'unlikes' => $result1->unlikes, 'comments' => $result2);
+		$finalResult = array("section" => $result1[0]->section, "title" => $result1[0]->title, "text" => $result1[0]->text, "likes" => $result1[0]->likes, "not_understood" => $result1[0]->not_understood, "unlikes" => $result1[0]->unlikes, "comments" => $result2[0]);
 		return response()->json($finalResult);
 	}
 
