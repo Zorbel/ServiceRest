@@ -3,10 +3,10 @@
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use DB;
+//use Illuminate\Http\Request;
+use Request;
 
-use Illuminate\Http\Request;
-
-class PoliticalPartyController extends Controller {
+class CommentController extends Controller {
 
 	/**
 	 * Display a listing of the resource.
@@ -15,15 +15,7 @@ class PoliticalPartyController extends Controller {
 	 */
 	public function index()
 	{
-		$results = DB::select('select * FROM `political_party` ORDER BY `name`');
-		$i = 0;
-
-		foreach ($results as $value) {
-			$list[$i] = array("id" => $value->id, "name" => $value->name, "logo" => base64_encode($value->logo));
-			$i++;
-		}
-
-		return response()->json($list);
+		return DB::select('select * FROM `comment`');
 	}
 
 	/**
@@ -33,7 +25,18 @@ class PoliticalPartyController extends Controller {
 	 */
 	public function create()
 	{
-		//
+		$input = Request::only('id_political_party', 'section', 'id_user', 'text');
+
+		if (is_null($input['id_political_party']) || is_null($input['section']) || is_null($input['id_user']) || is_null($input['text']))
+			return "Missing parameters";
+
+		else
+		{
+			if (DB::insert('INSERT INTO `comment` (`id_political_party`, `section`, `id_user`, `date`, `text`) VALUES (?, ?, ?, ?, ?)', array($input['id_political_party'], $input['section'], $input['id_user'], date('Y-m-d H:i:s'), $input['text'])))
+				return "Comment added";
+			else
+				return "Error unexpected";
+		}
 	}
 
 	/**
@@ -54,9 +57,7 @@ class PoliticalPartyController extends Controller {
 	 */
 	public function show($id)
 	{
-		$result = DB::select('select * FROM `political_party` WHERE `id` = ?', array($id));
-
-		return response()->json(array("id" => $result[0]->id, "name" => $result[0]->name, "logo" => base64_encode($result[0]->logo)));
+		return DB::select('select * FROM `comment` WHERE `id` = ?', array($id));
 	}
 
 	/**

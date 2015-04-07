@@ -22,37 +22,45 @@ Route::controllers([
 
 // Political program data functions
 
-Route::group(['prefix' => 'PoliticalParty'], function()
+Route::group(['prefix' => 'politicalParty'], function()
 {
 	Route::get('/', 'PoliticalPartyController@index');
 	
 	Route::get('/{id}', 'PoliticalPartyController@show');
-});
 
-Route::group(['prefix' => 'getPoliticalProgram'], function()
-{
-	Route::get('/{id}', 'PoliticalProgramController@show');
-	
-	Route::get('/{id_political_party}/{section}', 'PoliticalProgramController@showSection');
-	
-	Route::get('/{id_political_party}/{section}/getContent', 'PoliticalProgramController@showSectionText');
-});
+	// Route Sections
 
-// Social functions
+	Route::group(['prefix' => '/{id_political_party}/section'], function()
+	{
+		Route::get('/', 'SectionController@index');
 
-Route::group(['prefix' => 'social'], function()
-{
-	Route::get('/getLikes/{id_political_party}/{section}', 'SocialController@getLikes');
+		Route::get('/{id_section}', 'SectionController@show');
 
-	Route::get('/getUnlikes/{id_political_party}/{section}', 'SocialController@getUnlikes');
+		Route::group(['prefix' => '/{id_section}'], function()
+			{
+				Route::get('/like', 'SectionController@getLikes');
 
-	Route::get('/addLike/{id_political_party}/{section}', 'SocialController@addLike');
+				Route::put('/like', 'SectionController@addLike');
 
-	Route::get('/addUnlike/{id_political_party}/{section}', 'SocialController@addUnlike');
+				Route::get('/dislike', 'SectionController@getDislikes');
 
-	Route::get('/getComments/{id_political_party}/{section}', 'SocialController@getComments');
+				Route::put('/dislike', 'SectionController@addDislike');
 
-	Route::get('/getCommentsCount/{id_political_party}/{section}', 'SocialController@getCommentsCount');
+				Route::get('/notUnderstood', 'SectionController@getNotUnderstoods');
 
-	Route::post('/addComment', 'SocialController@addComment');
+				Route::put('/notUnderstood', 'SectionController@addNotUnderstood');
+			});
+
+		// Route Comments
+
+		Route::group(['prefix' => '{id_section}/comment'], function()
+		{
+			Route::get('/', 'CommentController@index');
+
+			Route::get('/{id}', 'CommentController@show');
+
+			Route::post('/', 'CommentController@create');
+		});
+
+	});
 });
