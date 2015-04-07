@@ -34,9 +34,9 @@ Route::group(['prefix' => 'politicalParty'], function()
 	{
 		Route::get('/', 'SectionController@index');
 
-		Route::get('/{id_section}', 'SectionController@show');
+		Route::get('/{section}', 'SectionController@show');
 
-		Route::group(['prefix' => '/{id_section}'], function()
+		Route::group(['prefix' => '/{section}'], function()
 			{
 				Route::get('/like', 'SectionController@getLikes');
 

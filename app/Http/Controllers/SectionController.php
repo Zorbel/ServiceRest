@@ -43,11 +43,11 @@ class SectionController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function show($id_political_party, $id_section)
+	public function show($id_political_party, $section)
 	{
-		//return DB::select('select * FROM `section` WHERE `id_political_party` = ? AND `section` = ?', array($id_political_party, $id_section));
+		//return DB::select('select * FROM `section` WHERE `id_political_party` = ? AND `section` = ?', array($id_political_party, $section));
 		$result1 = DB::select('select `section`, `title`, `text`, `likes`, `not_understood`, `dislikes` FROM `section` WHERE `id_political_party` = ? AND `section` = ?', array($id_political_party, $section));
-		$result2 = DB::select('select COUNT(*) as comments FROM `comment` WHERE `id_political_party` = ? AND `section` = ?', array($id_political_party, $id_section));
+		$result2 = DB::select('select COUNT(*) as comments FROM `comment` WHERE `id_political_party` = ? AND `section` = ?', array($id_political_party, $section));
 
 		$finalResult = array("section" => $result1[0]->section, "title" => $result1[0]->title, "text" => $result1[0]->text, "likes" => $result1[0]->likes, "not_understood" => $result1[0]->not_understood, "dislikes" => $result1[0]->dislikes, "comments" => $result2[0]->comments);
 		return response()->json($finalResult);
@@ -88,44 +88,44 @@ class SectionController extends Controller {
 
 	/**
 	*/
-	public function getLikes($id_political_party, $id_section)
+	public function getLikes($id_political_party, $section)
 	{
-		return DB::select('select `likes` FROM `section` WHERE `id_political_party` = ? AND `section` = ?', array($id_political_party, $id_section));
+		return DB::select('select `likes` FROM `section` WHERE `id_political_party` = ? AND `section` = ?', array($id_political_party, $section));
 	}
 
 	/**
 	*/
-	public function addLike($id_political_party, $id_section)
+	public function addLike($id_political_party, $section)
 	{
-		return DB::update('update `section` SET `likes` = `likes` + 1 WHERE `id_political_party` = ? and `id_section` = ?', array($id_political_party, $id_section));
+		return DB::update('update `section` SET `likes` = `likes` + 1 WHERE `id_political_party` = ? and `id_section` = ?', array($id_political_party, $section));
 	}
 
 	/**
 	*/
-	public function getDislikes($id_political_party, $id_section)
+	public function getDislikes($id_political_party, $section)
 	{
-		return DB::select('select `dislikes` FROM `section` WHERE `id_political_party` = ? AND `section` = ?', array($id_political_party, $id_section));
+		return DB::select('select `dislikes` FROM `section` WHERE `id_political_party` = ? AND `section` = ?', array($id_political_party, $section));
 	}
 
 	/**
 	*/
-	public function addDislike($id_political_party, $id_section)
+	public function addDislike($id_political_party, $section)
 	{
-		return DB::update('update `section` SET `dislike` = `dislike` + 1 WHERE `id_political_party` = ? and `id_section` = ?', array($id_political_party, $id_section));
+		return DB::update('update `section` SET `dislike` = `dislike` + 1 WHERE `id_political_party` = ? and `id_section` = ?', array($id_political_party, $section));
 	}
 
 	/**
 	*/
-	public function getNotUnderstoods($id_political_party, $id_section)
+	public function getNotUnderstoods($id_political_party, $section)
 	{
-		return DB::select('select `not_understood` FROM `section` WHERE `id_political_party` = ? AND `section` = ?', array($id_political_party, $id_section));
+		return DB::select('select `not_understood` FROM `section` WHERE `id_political_party` = ? AND `section` = ?', array($id_political_party, $section));
 	}
 
 	/**
 	*/
-	public function addNotUnderstood($id_political_party, $id_section)
+	public function addNotUnderstood($id_political_party, $section)
 	{
-		return DB::update('update `section` SET `not_understood` = `not_understood` + 1 WHERE `id_political_party` = ? and `id_section` = ?', array($id_political_party, $id_section));
+		return DB::update('update `section` SET `not_understood` = `not_understood` + 1 WHERE `id_political_party` = ? and `id_section` = ?', array($id_political_party, $section));
 	}
 
 }
