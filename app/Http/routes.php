@@ -53,7 +53,7 @@ Route::group(['prefix' => 'politicalParty'], function()
 
 		// Route Comments
 
-		Route::group(['prefix' => '{id_section}/comment'], function()
+		Route::group(['prefix' => '{section}/comment'], function()
 		{
 			Route::get('/', 'CommentController@index');
 

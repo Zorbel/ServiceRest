@@ -23,16 +23,16 @@ class CommentController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function create()
+	public function create($id_political_party, $section)
 	{
-		$input = Request::only('id_political_party', 'section', 'id_user', 'text');
+		$input = Request::only('id_user', 'text');
 
-		if (is_null($input['id_political_party']) || is_null($input['section']) || is_null($input['id_user']) || is_null($input['text']))
+		if (is_null($id_political_party) || is_null($section) || is_null($input['id_user']) || is_null($input['text']))
 			return "Missing parameters";
 
 		else
 		{
-			if (DB::insert('INSERT INTO `comment` (`id_political_party`, `section`, `id_user`, `date`, `text`) VALUES (?, ?, ?, ?, ?)', array($input['id_political_party'], $input['section'], $input['id_user'], date('Y-m-d H:i:s'), $input['text'])))
+			if (DB::insert('INSERT INTO `comment` (`id_political_party`, `section`, `id_user`, `date`, `text`) VALUES (?, ?, ?, ?, ?)', array($id_political_party, $section, $input['id_user'], date('Y-m-d H:i:s'), $input['text'])))
 				return "Comment added";
 			else
 				return "Error unexpected";
