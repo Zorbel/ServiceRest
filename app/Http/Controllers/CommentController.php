@@ -15,7 +15,7 @@ class CommentController extends Controller {
 	 */
 	public function index()
 	{
-		return DB::select('select * FROM `comment`');
+		return DB::select('select `user`.`nickname`, `comment`.`text`, `comment`.`date` FROM `comment`, `user` WHERE `comment`.`id_user` = `user`.`id` ORDER BY `comment`.`date`');
 	}
 
 	/**
