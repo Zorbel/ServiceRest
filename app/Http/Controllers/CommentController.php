@@ -13,9 +13,9 @@ class CommentController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function index()
+	public function index($id_political_party, $section)
 	{
-		return DB::select('select `user`.`nickname`, `comment`.`text`, `comment`.`date` FROM `comment`, `user` WHERE `comment`.`id_user` = `user`.`id` ORDER BY `comment`.`date`');
+		return DB::select('select `user`.`nickname`, `comment`.`text`, `comment`.`date` FROM `comment`, `user` WHERE `comment`.`section` = ? AND `comment`.`id_user` = `user`.`id` ORDER BY `comment`.`date`', array($section));
 	}
 
 	/**
