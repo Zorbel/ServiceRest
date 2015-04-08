@@ -97,7 +97,7 @@ class SectionController extends Controller {
 	*/
 	public function addLike($id_political_party, $section)
 	{
-		return DB::update('update `section` SET `likes` = `likes` + 1 WHERE `id_political_party` = ? and `id_section` = ?', array($id_political_party, $section));
+		return DB::update('update `section` SET `likes` = `likes` + 1 WHERE `id_political_party` = ? and `section` = ?', array($id_political_party, $section));
 	}
 
 	/**
@@ -111,7 +111,7 @@ class SectionController extends Controller {
 	*/
 	public function addDislike($id_political_party, $section)
 	{
-		return DB::update('update `section` SET `dislike` = `dislike` + 1 WHERE `id_political_party` = ? and `id_section` = ?', array($id_political_party, $section));
+		return DB::update('update `section` SET `dislikes` = `dislikes` + 1 WHERE `id_political_party` = ? and `section` = ?', array($id_political_party, $section));
 	}
 
 	/**
@@ -125,7 +125,7 @@ class SectionController extends Controller {
 	*/
 	public function addNotUnderstood($id_political_party, $section)
 	{
-		return DB::update('update `section` SET `not_understood` = `not_understood` + 1 WHERE `id_political_party` = ? and `id_section` = ?', array($id_political_party, $section));
+		return DB::update('update `section` SET `not_understood` = `not_understood` + 1 WHERE `id_political_party` = ? and `section` = ?', array($id_political_party, $section));
 	}
 
 }
