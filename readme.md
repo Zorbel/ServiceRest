@@ -90,4 +90,4 @@ The Laravel framework has a few system requirements:
 
 6. Configure the file *.env.example.* for a MySQL database.
 
-7. Check the installation of service on: http://localhost/ServiceRest/public/. This should display the welcome page Laravel.
+7. Check the installation of service on: [http://localhost/ServiceRest/public/](http://localhost/ServiceRest/public/). This should display the welcome page Laravel.
