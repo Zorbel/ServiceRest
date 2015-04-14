@@ -42,7 +42,7 @@ The Laravel framework has a few system requirements:
 	
 	`php -r "readfile('https://getcomposer.org/installer');" | php`
 
-	Run *compoposer*:
+	Run *composer*:
 
 	`php composer.phar`
 
@@ -61,13 +61,13 @@ The Laravel framework has a few system requirements:
     And create a symbolic link on your apache location:
     ```
     cd /var/www/html/
-    sudo ln -s /home/user/workspache/ServiceRest ServiceRest
+    sudo ln -s /home/user/workspace/ServiceRest ServiceRest
     ```
 4. Configure your apache installation. To make it work, at first, enable the rewrite module by executing following command in the terminal:
     
     `sudo a2enmod rewrite`
 
-    Second, find "apache2.conf" file in your system, mine is located in:
+    Second, find *apache2.conf* file in your system, mine is located in:
     
     `/etc/apache2/apache2.conf`
     
@@ -84,7 +84,7 @@ The Laravel framework has a few system requirements:
     
     `sudo service apache2 restart`
     
-5. Execute composer on your project folder location for download dependencies:
+5. Execute composer on your project folder location for update dependencies:
     
     `sudo composer update`
 
