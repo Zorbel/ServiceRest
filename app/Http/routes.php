@@ -25,6 +25,8 @@ Route::controllers([
 Route::group(['prefix' => 'top'], function()
 {
 	Route::get('/', 'TopController@index');
+
+	Route::get('/{resource}', 'TopController@top10');
 });
 
 Route::group(['prefix' => 'politicalParty'], function()

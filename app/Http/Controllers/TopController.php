@@ -24,6 +24,29 @@ class TopController extends Controller {
 		return $results;
 	}
 
+	public function top10($resource)
+	{
+		switch ($resource) {
+			case "views":
+				return DB::select('SELECT * FROM `section` ORDER BY `views` DESC LIMIT 0, 10');
+
+			case "likes":
+				return DB::select('SELECT * FROM `section` ORDER BY `likes` DESC LIMIT 0, 10');
+				
+			case "dislikes":
+				return DB::select('SELECT * FROM `section` ORDER BY `dislikes` DESC LIMIT 0, 10');
+							
+			case "not_understood":
+				return DB::select('SELECT * FROM `section` ORDER BY `not_understood` DESC LIMIT 0, 10');
+				
+			case "comments":
+				return DB::select('SELECT `id_political_party`, `section`, COUNT(`section`) AS `comments` FROM `comment` GROUP BY `section`, `id_political_party` ORDER BY `comments` DESC LIMIT 0, 10');
+				
+			default:
+				return "Invalid parameter";
+		}
+	}
+
 	/**
 	 * Show the form for creating a new resource.
 	 *
