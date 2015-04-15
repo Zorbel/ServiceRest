@@ -7,10 +7,9 @@ use Illuminate\Http\Request;
 
 class TopController extends Controller {
 
-	const SQL_QUERY = 'SELECT `section`.`id_political_party`, `section`.`section`, `title`, `likes`, `not_understood`, `dislikes`, `views`, COUNT(*) AS `comments` 
-					   FROM `comment`, `section` 
-					   WHERE `section`.`id_political_party` = `comment`.`id_political_party` AND `section`.`section` = `comment`.`section` 
-					   GROUP BY `section`, `id_political_party` 
+	const SQL_QUERY = 'SELECT `section`.`id_political_party`, `section`.`section`, `title`, `likes`, `not_understood`, `dislikes`, `views`, 
+						(SELECT COUNT(*) FROM `comment` WHERE `section`.`id_political_party` = `comment`.`id_political_party` AND `section`.`section` = `comment`.`section`) AS `comments` 
+					   FROM`section` 
 					   ORDER BY ';
 
 	/**
