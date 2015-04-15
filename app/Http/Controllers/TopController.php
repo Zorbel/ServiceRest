@@ -7,6 +7,12 @@ use Illuminate\Http\Request;
 
 class TopController extends Controller {
 
+	const SQL_QUERY = 'SELECT `section`.`id_political_party`, `section`.`section`, `title`, `likes`, `not_understood`, `dislikes`, `views`, COUNT(*) AS `comments` 
+					   FROM `comment`, `section` 
+					   WHERE `section`.`id_political_party` = `comment`.`id_political_party` AND `section`.`section` = `comment`.`section` 
+					   GROUP BY `section`, `id_political_party` 
+					   ORDER BY ';
+
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -14,33 +20,32 @@ class TopController extends Controller {
 	 */
 	public function index()
 	{
-		$views = DB::select('SELECT * FROM `section` ORDER BY `views` DESC LIMIT 0, 3');
-		$likes = DB::select('SELECT * FROM `section` ORDER BY `likes` DESC LIMIT 0, 3');
-		$dislikes = DB::select('SELECT * FROM `section` ORDER BY `dislikes` DESC LIMIT 0, 3');
-		$not_understood = DB::select('SELECT * FROM `section` ORDER BY `not_understood` DESC LIMIT 0, 3');
- 		$comments = DB::select('SELECT `id_political_party`, `section`, COUNT(`section`) AS `comments` FROM `comment` GROUP BY `section`, `id_political_party` ORDER BY `comments` DESC LIMIT 0, 3');
-		
-		$results = array("top_views" => $views, "top_likes" => $likes, "top_dislikes" => $dislikes, "top_not_understood" => $not_understood, "top_comments" => $comments);
-		return $results;
+		$views = DB::select(self::SQL_QUERY . '`views` DESC LIMIT 0, 3');
+		$likes = DB::select(self::SQL_QUERY . '`likes` DESC LIMIT 0, 3');
+		$dislikes = DB::select(self::SQL_QUERY . '`dislikes` DESC LIMIT 0, 3');
+		$not_understood = DB::select(self::SQL_QUERY . '`not_understood` DESC LIMIT 0, 3');
+ 		$comments = DB::select(self::SQL_QUERY . '`comments` DESC LIMIT 0, 3');
+
+		return array("top_views" => $views, "top_likes" => $likes, "top_dislikes" => $dislikes, "top_not_understood" => $not_understood, "top_comments" => $comments);
 	}
 
 	public function top10($resource)
 	{
 		switch ($resource) {
 			case "views":
-				return DB::select('SELECT * FROM `section` ORDER BY `views` DESC LIMIT 0, 10');
+				return DB::select(self::SQL_QUERY . '`views` DESC LIMIT 0, 10');
 
 			case "likes":
-				return DB::select('SELECT * FROM `section` ORDER BY `likes` DESC LIMIT 0, 10');
+				return DB::select(self::SQL_QUERY . '`likes` DESC LIMIT 0, 10');
 				
 			case "dislikes":
-				return DB::select('SELECT * FROM `section` ORDER BY `dislikes` DESC LIMIT 0, 10');
+				return DB::select(self::SQL_QUERY . '`dislikes` DESC LIMIT 0, 10');
 							
 			case "not_understood":
-				return DB::select('SELECT * FROM `section` ORDER BY `not_understood` DESC LIMIT 0, 10');
+				return DB::select(self::SQL_QUERY . '`not_understood` DESC LIMIT 0, 10');
 				
 			case "comments":
-				return DB::select('SELECT `id_political_party`, `section`, COUNT(`section`) AS `comments` FROM `comment` GROUP BY `section`, `id_political_party` ORDER BY `comments` DESC LIMIT 0, 10');
+				return DB::select(self::SQL_QUERY . '`comments` DESC LIMIT 0, 10');
 				
 			default:
 				return "Invalid parameter";

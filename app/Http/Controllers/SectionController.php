@@ -45,7 +45,9 @@ class SectionController extends Controller {
 	 */
 	public function show($id_political_party, $section)
 	{
-		$result1 = DB::select('select `section`, `title`, `text`, `likes`, `not_understood`, `dislikes` FROM `section` WHERE `id_political_party` = ? AND `section` = ?', array($id_political_party, $section));
+		$result1 = DB::select('SELECT `section`, `title`, `text`, `likes`, `not_understood`, `dislikes` 
+							   FROM `section` 
+							   WHERE `id_political_party` = ? AND `section` = ?', array($id_political_party, $section));
 
 		if (is_null($result1[0]->text))
 			$result1[0]->text = "";
@@ -54,8 +56,14 @@ class SectionController extends Controller {
 
 		$result2 = DB::select('select COUNT(*) as comments FROM `comment` WHERE `id_political_party` = ? AND `section` = ?', array($id_political_party, $section));
 
-		$finalResult = array("section" => $result1[0]->section, "title" => $result1[0]->title, "text" => $result1[0]->text, "likes" => $result1[0]->likes, "not_understood" => $result1[0]->not_understood, "dislikes" => $result1[0]->dislikes, "comments" => $result2[0]->comments);
-		return response()->json($finalResult);
+		return array("section" => $result1[0]->section, 
+					 "title" => $result1[0]->title, 
+					 "text" => $result1[0]->text, 
+					 "likes" => $result1[0]->likes, 
+					 "not_understood" => $result1[0]->not_understood, 
+					 "dislikes" => $result1[0]->dislikes, 
+					 "comments" => $result2[0]->comments
+					 );
 	}
 
 	/**

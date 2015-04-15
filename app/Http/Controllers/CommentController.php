@@ -15,7 +15,11 @@ class CommentController extends Controller {
 	 */
 	public function index($id_political_party, $section)
 	{
-		return DB::select('select `user`.`nickname`, `comment`.`text`, `comment`.`date` FROM `comment`, `user` WHERE `comment`.`section` = ? AND `comment`.`id_user` = `user`.`id` ORDER BY `comment`.`date`', array($section));
+		return DB::select('SELECT `user`.`nickname`, `comment`.`text`, `comment`.`date` 
+						   FROM `comment`, `user` 
+						   WHERE `comment`.`section` = ? AND `comment`.`id_user` = `user`.`id` 
+						   ORDER BY `comment`.`date`', array($section)
+						   );
 	}
 
 	/**
@@ -32,7 +36,8 @@ class CommentController extends Controller {
 
 		else
 		{
-			if (DB::insert('INSERT INTO `comment` (`id_political_party`, `section`, `id_user`, `date`, `text`) VALUES (?, ?, ?, ?, ?)', array($id_political_party, $section, $input['id_user'], date('Y-m-d H:i:s'), $input['text'])))
+			if (DB::insert('INSERT INTO `comment` (`id_political_party`, `section`, `id_user`, `date`, `text`) 
+							VALUES (?, ?, ?, ?, ?)', array($id_political_party, $section, $input['id_user'], date('Y-m-d H:i:s'), $input['text'])))
 				return "Comment added";
 			else
 				return "Error unexpected";
