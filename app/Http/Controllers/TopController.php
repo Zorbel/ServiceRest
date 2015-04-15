@@ -20,7 +20,7 @@ class TopController extends Controller {
 		$not_understood = DB::select('SELECT * FROM `section` ORDER BY `not_understood` DESC LIMIT 0, 3');
  		$comments = DB::select('SELECT `id_political_party`, `section`, COUNT(`section`) AS `comments` FROM `comment` GROUP BY `section`, `id_political_party` ORDER BY `comments` DESC LIMIT 0, 3');
 		
-		$results = array("views" => array($views), "likes" => array($likes), "dislikes" => array($dislikes), "not_understood" => array($not_understood), "comments" => array($comments));
+		$results = array("top_views" => $views, "top_likes" => $likes, "top_dislikes" => $dislikes, "top_not_understood" => $not_understood, "top_comments" => $comments);
 		return $results;
 	}
 
