@@ -14,7 +14,7 @@ class SectionController extends Controller {
 	 */
 	public function index($id_political_party)
 	{
-		return DB::select('select * FROM `section` WHERE `id_political_party` = ?', array($id_political_party));
+		return DB::select('SELECT * FROM `section` WHERE `id_political_party` = ?', array($id_political_party));
 	}
 
 	/**
@@ -54,7 +54,7 @@ class SectionController extends Controller {
 		else
 			DB::update('UPDATE `section` SET `views` = `views` + 1 WHERE `id_political_party` = ? AND `section` = ?', array($id_political_party, $section));
 
-		$result2 = DB::select('select COUNT(*) as comments FROM `comment` WHERE `id_political_party` = ? AND `section` = ?', array($id_political_party, $section));
+		$result2 = DB::select('SELECT COUNT(*) AS `comments` FROM `comment` WHERE `id_political_party` = ? AND `section` = ?', array($id_political_party, $section));
 
 		return array("section" => $result1[0]->section, 
 					 "title" => $result1[0]->title, 
@@ -110,7 +110,8 @@ class SectionController extends Controller {
 	*/
 	public function addLike($id_political_party, $section)
 	{
-		return DB::update('update `section` SET `likes` = `likes` + 1 WHERE `id_political_party` = ? and `section` = ?', array($id_political_party, $section));
+		DB::update('update `section` SET `likes` = `likes` + 1 WHERE `id_political_party` = ? and `section` = ?', array($id_political_party, $section));
+		return SectionController::getCounters($id_political_party, $section);
 	}
 
 	/**
@@ -124,7 +125,8 @@ class SectionController extends Controller {
 	*/
 	public function addDislike($id_political_party, $section)
 	{
-		return DB::update('update `section` SET `dislikes` = `dislikes` + 1 WHERE `id_political_party` = ? and `section` = ?', array($id_political_party, $section));
+		DB::update('update `section` SET `dislikes` = `dislikes` + 1 WHERE `id_political_party` = ? and `section` = ?', array($id_political_party, $section));
+		return SectionController::getCounters($id_political_party, $section);
 	}
 
 	/**
@@ -138,7 +140,16 @@ class SectionController extends Controller {
 	*/
 	public function addNotUnderstood($id_political_party, $section)
 	{
-		return DB::update('update `section` SET `not_understood` = `not_understood` + 1 WHERE `id_political_party` = ? and `section` = ?', array($id_political_party, $section));
+		DB::update('update `section` SET `not_understood` = `not_understood` + 1 WHERE `id_political_party` = ? and `section` = ?', array($id_political_party, $section));
+		return SectionController::getCounters($id_political_party, $section);
+	}
+
+	/**
+	*/
+	private function getCounters($id_political_party, $section)
+	{
+		return DB::select('SELECT `likes`, `not_understood`, `dislikes`, `views`, (SELECT COUNT(*) FROM `comment` WHERE `id_political_party` = ? AND `section` = ?) AS `comments` 
+					   	   FROM `section` WHERE `id_political_party` = ? AND `section` = ?', array($id_political_party, $section, $id_political_party, $section));		
 	}
 
 }
