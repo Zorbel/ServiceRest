@@ -38,7 +38,7 @@ class CommentController extends Controller {
 		{
 			if (DB::insert('INSERT INTO `comment` (`id_political_party`, `section`, `id_user`, `date`, `text`) 
 							VALUES (?, ?, ?, ?, ?)', array($id_political_party, $section, $input['id_user'], date('Y-m-d H:i:s'), $input['text'])))
-				return "Comment added";
+				return CommentController::index($id_political_party, $section);
 			else
 				return "Error unexpected";
 		}
