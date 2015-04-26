@@ -17,8 +17,8 @@ class CommentController extends Controller {
 	{
 		return DB::select('SELECT `user`.`nickname`, `comment`.`text`, `comment`.`date` 
 						   FROM `comment`, `user` 
-						   WHERE `comment`.`section` = ? AND `comment`.`id_user` = `user`.`id` 
-						   ORDER BY `comment`.`date`', array($section)
+						   WHERE `comment`.`section` = ? AND `comment`.`id_user` = `user`.`id` AND `comment`.`id_political_party` = ?
+						   ORDER BY `comment`.`date`', array($section, $id_political_party)
 						   );
 	}
 
