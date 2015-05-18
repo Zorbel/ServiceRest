@@ -23,7 +23,7 @@ class PoliticalPartyController extends Controller {
 			$i++;
 		}
 
-		return response()->json($list);
+		return $list;
 	}
 
 	/**

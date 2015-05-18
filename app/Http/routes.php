@@ -71,3 +71,13 @@ Route::group(['prefix' => 'politicalParty'], function()
 
 	});
 });
+
+// Route Proposals
+
+
+Route::group(['prefix' => 'proposal'], function()
+{
+	Route::get('/', 'ProposalController@index');
+
+	Route::post('/', 'ProposalController@create');
+});

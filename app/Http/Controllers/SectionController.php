@@ -24,7 +24,7 @@ class SectionController extends Controller {
 	 */
 	public function create()
 	{
-		//
+		return DB::create('');
 	}
 
 	/**
