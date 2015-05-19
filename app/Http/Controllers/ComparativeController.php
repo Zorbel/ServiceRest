@@ -2,9 +2,9 @@
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
-use Illuminate\Http\Request;
-
+use DB;
+//use Illuminate\Http\Request;
+use Request;
 class ComparativeController extends Controller {
 
 	/**
@@ -14,7 +14,27 @@ class ComparativeController extends Controller {
 	 */
 	public function index()
 	{
-		//
+		$results = DB::select('SELECT * FROM `comparative`');
+		$i = 0;
+
+		foreach ($results as $value) {
+			$list[$i] = array(
+								"id" => $value->id, 
+								"title" => $value->title, 
+								"text" => $value->text, 
+								"image" => base64_encode($value->image), 
+								"date" => $value->date,
+								"id_user" => $value->id_user, 
+								"id_group" => $value->id_group,
+								"views" => $value->views, 
+								"likes" => $value->likes, 
+								"not_understood" => $value->not_understood, 
+								"dislikes" => $value->dislikes
+								);
+			$i++;
+		}
+
+		return $list;
 	}
 
 	/**
@@ -24,7 +44,7 @@ class ComparativeController extends Controller {
 	 */
 	public function create()
 	{
-		//
+		//TODO: Implements insert method on DB
 	}
 
 	/**

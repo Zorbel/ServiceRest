@@ -26,7 +26,11 @@ Route::group(['prefix' => 'top'], function()
 {
 	Route::get('/', 'TopController@index');
 
-	Route::get('/{resource}', 'TopController@top10');
+	Route::get('/sections/{resource}', 'TopController@top10Sections');
+
+	Route::get('/proposals/{resource}/{rows}', 'TopController@top10Proposals');
+
+	Route::get('/comparative/{resource}/{rows}', 'TopController@top10Comparatives');
 });
 
 Route::group(['prefix' => 'politicalParty'], function()
@@ -78,6 +82,8 @@ Route::group(['prefix' => 'politicalParty'], function()
 Route::group(['prefix' => 'proposal'], function()
 {
 	Route::get('/', 'ProposalController@index');
+
+	Route::get('/{id}', 'ProposalController@show');
 
 	Route::post('/', 'ProposalController@create');
 });

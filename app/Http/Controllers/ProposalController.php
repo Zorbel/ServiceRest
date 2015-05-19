@@ -19,12 +19,21 @@ class ProposalController extends Controller {
 		$i = 0;
 
 		foreach ($results as $value) {
-			$list[$i] = array("id" => $value->id, "title" => $value->title, 
-				"text" => $value->text, "how" => $value->how, "cost" => $value->cost,
-				"image" => base64_encode($value->image), "date" => $value->date,
-				"id_user" => $value->id_user, "id_group" => $value->id_group,
-				"likes" => $value->likes, "not_understood" => $value->not_understood,
-				"dislikes" => $value->dislikes);
+			$list[$i] = array(
+								"id" => $value->id, 
+								"title" => $value->title, 
+								"text" => $value->text, 
+								"how" => $value->how, 
+								"cost" => $value->cost,
+								"image" => base64_encode($value->image), 
+								"date" => $value->date,
+								"id_user" => $value->id_user, 
+								"id_group" => $value->id_group,
+								"views" => $value->views, 
+								"likes" => $value->likes, 
+								"not_understood" => $value->not_understood, 
+								"dislikes" => $value->dislikes
+								);
 			$i++;
 		}
 
@@ -40,10 +49,18 @@ class ProposalController extends Controller {
 	{
 		$input = Request::only(`title`, `text`, `how`, `cost`, `date`, `id_user`);
 
-		return DB::insert('INSERT INTO `proposal` 
-			(`title`, `text`, `how`, `cost`, `date`, `id_user`)
-			VALUES (?, ?, ?, ?, ?, ?)', 
-			array($input['title'], $input['text'], $input['how'], $input['cost'], date('Y-m-d H:i:s'), $input['id_user']));
+		if (is_null($input['title']) || is_null($input['text']) || is_null($input['how']) || is_null($input['cost']) || is_null($input['date']) || is_null($input['id_user']))
+			return "Missing parameters";
+
+		else
+		{
+			if (DB::insert('INSERT INTO `proposal` (`title`, `text`, `how`, `cost`, `date`, `id_user`)
+					VALUES (?, ?, ?, ?, ?, ?)', 
+					array($input['title'], $input['text'], $input['how'], $input['cost'], date('Y-m-d H:i:s'), $input['id_user'])))
+				return "OK";
+			else
+				return "Error unexpected";
+		}
 	}
 
 	/**
@@ -64,7 +81,20 @@ class ProposalController extends Controller {
 	 */
 	public function show($id)
 	{
-		//
+		$results = DB::select('SELECT * FROM `proposal` WHERE `id` = ?', array($id));
+		$i = 0;
+
+		foreach ($results as $value) {
+			$list[$i] = array("id" => $value->id, "title" => $value->title, 
+				"text" => $value->text, "how" => $value->how, "cost" => $value->cost,
+				"image" => base64_encode($value->image), "date" => $value->date,
+				"id_user" => $value->id_user, "id_group" => $value->id_group,
+				"likes" => $value->likes, "not_understood" => $value->not_understood,
+				"dislikes" => $value->dislikes);
+			$i++;
+		}
+
+		return $list;
 	}
 
 	/**
