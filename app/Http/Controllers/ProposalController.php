@@ -16,6 +16,7 @@ class ProposalController extends Controller {
 	public function index()
 	{
 		$results = DB::select('SELECT * FROM `proposal`');
+		/*
 		$i = 0;
 
 		foreach ($results as $value) {
@@ -36,8 +37,13 @@ class ProposalController extends Controller {
 								);
 			$i++;
 		}
+		*/
+		return $results;
+	}
 
-		return $list;
+	public function showCategory($id_category)
+	{
+		return DB::select('SELECT * FROM `proposal` WHERE `id_category` = ?', array($id_category));
 	}
 
 	/**
@@ -82,6 +88,8 @@ class ProposalController extends Controller {
 	public function show($id)
 	{
 		$results = DB::select('SELECT * FROM `proposal` WHERE `id` = ?', array($id));
+		
+		/*
 		$i = 0;
 
 		foreach ($results as $value) {
@@ -93,8 +101,9 @@ class ProposalController extends Controller {
 				"dislikes" => $value->dislikes);
 			$i++;
 		}
+		*/
 
-		return $list;
+		return $results;
 	}
 
 	/**
@@ -129,5 +138,4 @@ class ProposalController extends Controller {
 	{
 		//
 	}
-
 }

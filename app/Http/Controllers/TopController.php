@@ -8,19 +8,21 @@ use Illuminate\Http\Request;
 class TopController extends Controller {
 
 	const SECTIONS_QUERY = 'SELECT `section`.`id_political_party`, `section`.`section`, `title`, `likes`, `not_understood`, `dislikes`, `views`, 
-							(SELECT COUNT(*) FROM `comment` WHERE `section`.`id_political_party` = `comment`.`id_political_party` AND `section`.`section` = `comment`.`section`) AS `comments` 
+							(SELECT COUNT(*) FROM `comment` WHERE `section`.`id_political_party` = `comment`.`id_political_party` AND `section`.`section` = `comment`.`section`) AS `comments`,
+	 						(SELECT `name` FROM `category` WHERE `category`.`id` = `section`.`id_category`) AS `category`
 					   		FROM `section` 
 					   		ORDER BY ';
 
 	const PROPOSALS_QUERY = 'SELECT `id`, `title`, `image`, `date`, `views`, `likes`, `not_understood`, `dislikes`,
-	 						(SELECT COUNT(*) FROM `comment` WHERE `comment`.`id_proposal` = `proposal`.`id`) AS `comments`
+	 						(SELECT COUNT(*) FROM `comment` WHERE `comment`.`id_proposal` = `proposal`.`id`) AS `comments`,
+	 						(SELECT `name` FROM `category` WHERE `category`.`id` = `proposal`.`id_category`) AS `category`
 	 						FROM `proposal`
 	 						ORDER BY ';
 
-	const COMPARATIVES_QUERY = 'SELECT `id`, `title`, `image`, `date`, `views`, `likes`, `not_understood`, `dislikes`,
-	 						(SELECT COUNT(*) FROM `comment` WHERE `comment`.`id_comparative` = `comparative`.`id`) AS `comments`
-	 						FROM `comparative`
-	 						ORDER BY ';
+	const COMPARATIVES_QUERY = 	'SELECT `id`, `title`, `image`, `date`, `views`, `likes`, `not_understood`, `dislikes`,
+	 							(SELECT COUNT(*) FROM `comment` WHERE `comment`.`id_comparative` = `comparative`.`id`) AS `comments`
+	 							FROM `comparative`
+	 							ORDER BY ';
 
 	/**
 	 * Display a listing of the resource.
@@ -29,7 +31,11 @@ class TopController extends Controller {
 	 */
 	public function index()
 	{
-		//
+		$last_proposals = DB::select(self::PROPOSALS_QUERY . '`date` DESC LIMIT 0, 3');
+		$popular_sections = DB::select(self::SECTIONS_QUERY . '`views` DESC LIMIT 0, 3');
+		$sections_more_comments = DB::select(self::SECTIONS_QUERY . '`comments` DESC LIMIT 0, 3');
+
+		return array("last_proposals" => $last_proposals, "popular_sections" => $popular_sections, "sections_more_comments" => $sections_more_comments);
 	}
 
 	public function top3Secions()
@@ -43,23 +49,23 @@ class TopController extends Controller {
 		return array("top_views" => $views, "top_likes" => $likes, "top_dislikes" => $dislikes, "top_not_understood" => $not_understood, "top_comments" => $comments);
 	}
 
-	public function top10Sections($resource)
+	public function top10Sections($resource, $rows)
 	{
 		switch ($resource) {
 			case "views":
-				return DB::select(self::SECTIONS_QUERY . '`views` DESC LIMIT 0, 10');
+				return DB::select(self::SECTIONS_QUERY . '`views` DESC LIMIT 0, ?', array($rows));
 
 			case "likes":
-				return DB::select(self::SECTIONS_QUERY . '`likes` DESC LIMIT 0, 10');
+				return DB::select(self::SECTIONS_QUERY . '`likes` DESC LIMIT 0, ?', array($rows));
 				
 			case "dislikes":
-				return DB::select(self::SECTIONS_QUERY . '`dislikes` DESC LIMIT 0, 10');
+				return DB::select(self::SECTIONS_QUERY . '`dislikes` DESC LIMIT 0, ?', array($rows));
 							
 			case "not_understood":
-				return DB::select(self::SECTIONS_QUERY . '`not_understood` DESC LIMIT 0, 10');
+				return DB::select(self::SECTIONS_QUERY . '`not_understood` DESC LIMIT 0, ?', array($rows));
 				
 			case "comments":
-				return DB::select(self::SECTIONS_QUERY . '`comments` DESC LIMIT 0, 10');
+				return DB::select(self::SECTIONS_QUERY . '`comments` DESC LIMIT 0, ?', array($rows));
 				
 			default:
 				return "Invalid parameter";
@@ -108,7 +114,8 @@ class TopController extends Controller {
 	{
 		switch ($resource) {
 			case "views":
-				$results = DB::select(self::COMPARATIVES_QUERY . '`views` DESC LIMIT 0, ?', array($rows));				break;
+				$results = DB::select(self::COMPARATIVES_QUERY . '`views` DESC LIMIT 0, ?', array($rows));
+				break;
 
 			case "likes":
 				$results = DB::select(self::COMPARATIVES_QUERY . '`likes` DESC LIMIT 0, ?', array($rows));

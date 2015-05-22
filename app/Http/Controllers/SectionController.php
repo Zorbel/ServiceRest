@@ -45,9 +45,9 @@ class SectionController extends Controller {
 	 */
 	public function show($id_political_party, $section)
 	{
-		$result1 = DB::select('SELECT `section`, `title`, `text`, `likes`, `not_understood`, `dislikes` 
-							   FROM `section` 
-							   WHERE `id_political_party` = ? AND `section` = ?', array($id_political_party, $section));
+		$result1 = DB::select('	SELECT `section`, `title`, `text`, `likes`, `not_understood`, `dislikes`
+								FROM `section` 
+							   	WHERE `id_political_party` = ? AND `section` = ?', array($id_political_party, $section));
 
 		if (is_null($result1[0]->text))
 			$result1[0]->text = "";
