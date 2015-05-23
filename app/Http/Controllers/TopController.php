@@ -7,15 +7,16 @@ use Illuminate\Http\Request;
 
 class TopController extends Controller {
 
-	const SECTIONS_QUERY = 'SELECT `section`.`id_political_party`, `section`.`section`, `title`, `likes`, `not_understood`, `dislikes`, `views`, 
-							(SELECT COUNT(*) FROM `comment` WHERE `section`.`id_political_party` = `comment`.`id_political_party` AND `section`.`section` = `comment`.`section`) AS `comments`,
-	 						(SELECT `name` FROM `category` WHERE `category`.`id` = `section`.`id_category`) AS `category`
+	const SECTIONS_QUERY = 'SELECT `section`.`id_political_party`, `section`.`section`, `title`,
+							(SELECT `name` FROM `category` WHERE `category`.`id` = `section`.`id_category`) AS `category`,
+							`likes`, `not_understood`, `dislikes`, `views`, 
+							(SELECT COUNT(*) FROM `comment` WHERE `section`.`id_political_party` = `comment`.`id_political_party` AND `section`.`section` = `comment`.`section`) AS `comments`
 					   		FROM `section` 
 					   		ORDER BY ';
 
-	const PROPOSALS_QUERY = 'SELECT `id`, `title`, `image`, `date`, `views`, `likes`, `not_understood`, `dislikes`,
-	 						(SELECT COUNT(*) FROM `comment` WHERE `comment`.`id_proposal` = `proposal`.`id`) AS `comments`,
-	 						(SELECT `name` FROM `category` WHERE `category`.`id` = `proposal`.`id_category`) AS `category`
+	const PROPOSALS_QUERY = 'SELECT `id`, `title`, `id_image`, `views`, `likes`, `not_understood`, `dislikes`, `date`,
+							(SELECT `nickname` FROM `user` WHERE `proposal`.`id_user` = `user`.`id`) AS `user`,
+	 						(SELECT COUNT(*) FROM `comment` WHERE `comment`.`id_proposal` = `proposal`.`id`) AS `comments`
 	 						FROM `proposal`
 	 						ORDER BY ';
 
@@ -75,6 +76,10 @@ class TopController extends Controller {
 	public function top10Proposals($resource, $rows)
 	{
 		switch ($resource) {
+			case "date":
+				$results = DB::select(self::PROPOSALS_QUERY . '`date` DESC LIMIT 0, ?', array($rows));
+				break;
+
 			case "views":
 				$results = DB::select(self::PROPOSALS_QUERY . '`views` DESC LIMIT 0, ?', array($rows));
 				break;
@@ -99,6 +104,7 @@ class TopController extends Controller {
 				return "Invalid parameter";
 			}
 
+		/*
 		$i = 0;
 
 		foreach ($results as $value) {
@@ -106,8 +112,9 @@ class TopController extends Controller {
 			 "likes" => $value->likes, "not_understood" => $value->not_understood, "dislikes" => $value->dislikes);
 			$i++;
 		}
+		*/
 
-		return $list;
+		return $results;
 	}
 
 	public function top10Comparatives($resource, $rows)

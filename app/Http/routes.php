@@ -28,6 +28,8 @@ Route::group(['prefix' => 'top'], function()
 
 	Route::get('/sections/{resource}', 'TopController@top3Secions');
 
+	Route::get('/sections/{resource}/{rows}', 'TopController@top10Sections');
+
 	Route::get('/proposals/{resource}/{rows}', 'TopController@top10Proposals');
 
 	Route::get('/comparative/{resource}/{rows}', 'TopController@top10Comparatives');
