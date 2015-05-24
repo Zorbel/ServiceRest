@@ -16,29 +16,6 @@ class ProposalController extends Controller {
 	public function index()
 	{
 		$results = DB::select('SELECT * FROM `proposal`');
-		/*
-		$i = 0;
-
-		foreach ($results as $value) {
-			$list[$i] = array(
-								"id" => $value->id, 
-								"title" => $value->title, 
-								"text" => $value->text, 
-								"how" => $value->how, 
-								"cost" => $value->cost,
-								"image" => base64_encode($value->image), 
-								"date" => $value->date,
-								"id_user" => $value->id_user, 
-								"id_group" => $value->id_group,
-								"views" => $value->views, 
-								"likes" => $value->likes, 
-								"not_understood" => $value->not_understood, 
-								"dislikes" => $value->dislikes
-								);
-			$i++;
-		}
-		*/
-		return $results;
 	}
 
 	public function showCategory($id_category)
@@ -87,23 +64,13 @@ class ProposalController extends Controller {
 	 */
 	public function show($id)
 	{
-		$results = DB::select('SELECT * FROM `proposal` WHERE `id` = ?', array($id));
-		
-		/*
-		$i = 0;
-
-		foreach ($results as $value) {
-			$list[$i] = array("id" => $value->id, "title" => $value->title, 
-				"text" => $value->text, "how" => $value->how, "cost" => $value->cost,
-				"image" => base64_encode($value->image), "date" => $value->date,
-				"id_user" => $value->id_user, "id_group" => $value->id_group,
-				"likes" => $value->likes, "not_understood" => $value->not_understood,
-				"dislikes" => $value->dislikes);
-			$i++;
-		}
-		*/
-
-		return $results;
+		return DB::select('SELECT `id`, `title`, `text`, `how`, `cost`,
+							(SELECT `file` FROM `media` WHERE `proposal`.`id_image` = `media`.`id`) AS `image`, `date`,
+							(SELECT `name` FROM `category` WHERE `proposal`.`id_category` = `category`.`id`) AS `category`,
+							(SELECT `nickname` FROM `user` WHERE `proposal`.`id_user`= `user`.`id`) AS `user`,
+							`views`, `likes`, `not_understood`, `dislikes`,
+							(SELECT COUNT(*) FROM `comment` WHERE `proposal`.`id` = `comment`.`id_proposal`) AS `comments`
+							FROM `proposal` WHERE `proposal`.`id` = ?', array($id));
 	}
 
 	/**

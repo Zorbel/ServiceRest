@@ -14,7 +14,7 @@ class TopController extends Controller {
 					   		FROM `section` 
 					   		ORDER BY ';
 
-	const PROPOSALS_QUERY = 'SELECT `id`, `title`, `id_image`, `views`, `likes`, `not_understood`, `dislikes`, `date`,
+	const PROPOSALS_QUERY = 'SELECT `id`, `title`, (SELECT `file` FROM `media` WHERE `proposal`.`id_image` = `media`.`id`) AS `id_image`, `views`, `likes`, `not_understood`, `dislikes`, `date`,
 							(SELECT `nickname` FROM `user` WHERE `proposal`.`id_user` = `user`.`id`) AS `user`,
 	 						(SELECT COUNT(*) FROM `comment` WHERE `comment`.`id_proposal` = `proposal`.`id`) AS `comments`
 	 						FROM `proposal`

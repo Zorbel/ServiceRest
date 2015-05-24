@@ -80,7 +80,6 @@ Route::group(['prefix' => 'politicalParty'], function()
 
 // Route Proposals
 
-
 Route::group(['prefix' => 'proposal'], function()
 {
 	Route::get('/', 'ProposalController@index');
@@ -94,4 +93,13 @@ Route::group(['prefix' => 'proposal'], function()
 	Route::get('/category/{id_category}', 'ProposalController@showCategory');
 
 	Route::post('/', 'ProposalController@create');
+});
+
+// Route categories
+
+Route::group(['prefix' => 'category'], function()
+{
+	Route::get('/{id_category}/section/{rows}', 'CategoryController@getSections');
+
+	Route::get('/{id_category}/proposal/{rows}', 'CategoryController@getProposals');
 });
