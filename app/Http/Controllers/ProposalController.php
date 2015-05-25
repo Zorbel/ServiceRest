@@ -30,17 +30,16 @@ class ProposalController extends Controller {
 	 */
 	public function create()
 	{
-		$input = Request::only(`title`, `text`, `how`, `cost`, `date`, `id_user`);
+		$input = Request::only(`title`, `text`, `how`, `cost`, `id_category`, `id_user`, `id_image`);
 
-		if (is_null($input['title']) || is_null($input['text']) || is_null($input['how']) || is_null($input['cost']) || is_null($input['date']) || is_null($input['id_user']))
+		if (is_null($input['title']) || is_null($input['text']) || is_null($input['how']) || is_null($input['cost']) || is_null($input['id_category']) || is_null($input['id_user']) || is_null($input['id_image']))
 			return "Missing parameters";
 
 		else
 		{
-			if (DB::insert('INSERT INTO `proposal` (`title`, `text`, `how`, `cost`, `date`, `id_user`)
-					VALUES (?, ?, ?, ?, ?, ?)', 
-					array($input['title'], $input['text'], $input['how'], $input['cost'], date('Y-m-d H:i:s'), $input['id_user'])))
-				return "OK";
+			if (DB::insert('INSERT INTO `proposal` (`title`, `text`, `how`, `cost`, `id_category`, `id_image`, `date`, `id_user`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+				array($input['title'], $input['text'], $input['how'], $input['cost'], $input['id_category'], $input['id_image'], date('Y-m-d H:i:s'), $input['id_user'])))
+				return ProposalController::show(DB::getPdo()->lastInsertId());
 			else
 				return "Error unexpected";
 		}
