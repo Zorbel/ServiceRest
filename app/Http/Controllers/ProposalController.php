@@ -116,7 +116,7 @@ class ProposalController extends Controller {
 	public function addLike($id_proposal)
 	{
 		DB::update('update `proposal` SET `likes` = `likes` + 1 WHERE `id` = ?', array($id_proposal));
-		return SectionController::getCounters($id, $proposal);
+		return ProposalController::getCounters($id_proposal);
 	}
 
 	/**
@@ -131,7 +131,7 @@ class ProposalController extends Controller {
 	public function addDislike($id_proposal)
 	{
 		DB::update('update `proposal` SET `dislikes` = `dislikes` + 1 WHERE `id` = ?', array($id_proposal));
-		return SectionController::getCounters($id, $proposal);
+		return ProposalController::getCounters($id_proposal);
 	}
 
 	/**
@@ -146,7 +146,7 @@ class ProposalController extends Controller {
 	public function addNotUnderstood($id_proposal)
 	{
 		DB::update('update `proposal` SET `not_understood` = `not_understood` + 1 WHERE `id` = ?', array($id_proposal));
-		return SectionController::getCounters($id, $proposal);
+		return ProposalController::getCounters($id_proposal);
 	}
 
 	/**
@@ -155,6 +155,6 @@ class ProposalController extends Controller {
 	{
 		return DB::select('SELECT `likes`, `not_understood`, `dislikes`, `views`, 
 							(SELECT COUNT(*) FROM `comment` WHERE `id_proposal` = ?) AS `comments` 
-							FROM `proposal` WHERE `id` = ?', array($id_proposal));		
+							FROM `proposal` WHERE `id` = ?', array($id_proposal, $id_proposal));		
 	}
 }
