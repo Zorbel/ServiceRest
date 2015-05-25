@@ -72,7 +72,7 @@ Route::group(['prefix' => 'politicalParty'], function()
 
 			Route::get('/{id}', 'CommentController@show');
 
-			Route::post('/', 'CommentController@create');
+			Route::post('/', 'CommentController@newSectionComment');
 		});
 
 	});
@@ -93,6 +93,12 @@ Route::group(['prefix' => 'proposal'], function()
 	Route::get('/category/{id_category}', 'ProposalController@showCategory');
 
 	Route::post('/', 'ProposalController@create');
+
+	Route::put('/{id}/like', 'ProposalController@addLike');
+
+	Route::put('/{id}/dislike', 'ProposalController@addDislike');
+
+	Route::put('/{id}/notUnderstood', 'ProposalController@addNotUnderstood');
 });
 
 // Route categories

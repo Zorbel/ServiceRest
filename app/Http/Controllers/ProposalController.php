@@ -105,4 +105,56 @@ class ProposalController extends Controller {
 	{
 		//
 	}
+
+		public function getLikes($id_proposal)
+	{
+		return DB::select('select `likes` FROM `proposal` WHERE `id` = ?', array($id_proposal));
+	}
+
+	/**
+	*/
+	public function addLike($id_proposal)
+	{
+		DB::update('update `proposal` SET `likes` = `likes` + 1 WHERE `id` = ?', array($id_proposal));
+		return SectionController::getCounters($id, $proposal);
+	}
+
+	/**
+	*/
+	public function getDislikes($id_proposal)
+	{
+		return DB::select('select `dislikes` FROM `proposal` WHERE `id` = ?', array($id_proposal));
+	}
+
+	/**
+	*/
+	public function addDislike($id_proposal)
+	{
+		DB::update('update `proposal` SET `dislikes` = `dislikes` + 1 WHERE `id` = ?', array($id_proposal));
+		return SectionController::getCounters($id, $proposal);
+	}
+
+	/**
+	*/
+	public function getNotUnderstoods($id_proposal)
+	{
+		return DB::select('select `not_understood` FROM `proposal` WHERE `id` = ?', array($id_proposal));
+	}
+
+	/**
+	*/
+	public function addNotUnderstood($id_proposal)
+	{
+		DB::update('update `proposal` SET `not_understood` = `not_understood` + 1 WHERE `id` = ?', array($id_proposal));
+		return SectionController::getCounters($id, $proposal);
+	}
+
+	/**
+	*/
+	private function getCounters($id_proposal)
+	{
+		return DB::select('SELECT `likes`, `not_understood`, `dislikes`, `views`, 
+							(SELECT COUNT(*) FROM `comment` WHERE `id_proposal` = ?) AS `comments` 
+							FROM `proposal` WHERE `id` = ?', array($id_proposal));		
+	}
 }

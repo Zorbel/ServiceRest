@@ -36,7 +36,7 @@ class CommentController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function create($id_political_party, $section)
+	public function newSectionComment($id_political_party, $section)
 	{
 		$input = Request::only('id_user', 'text');
 
@@ -69,16 +69,6 @@ class CommentController extends Controller {
 				return "Error unexpected";
 		}
 
-	}
-
-	public function upComment($id_comment)
-	{
-
-	}
-
-	public function downComment($id_comment)
-	{
-		
 	}
 
 	/**
