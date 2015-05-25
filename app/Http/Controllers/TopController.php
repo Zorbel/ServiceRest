@@ -103,17 +103,7 @@ class TopController extends Controller {
 			default:
 				return "Invalid parameter";
 			}
-
-		/*
-		$i = 0;
-
-		foreach ($results as $value) {
-			$list[$i] = array("id" => $value->id, "title" => $value->title, "image" => base64_encode($value->image), "date" => $value->date, "views" => $value->date,
-			 "likes" => $value->likes, "not_understood" => $value->not_understood, "dislikes" => $value->dislikes);
-			$i++;
-		}
-		*/
-
+			
 		return $results;
 	}
 

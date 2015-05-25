@@ -35,9 +35,14 @@ class CategoryController extends Controller {
 		return DB::select(self::SECTIONS_QUERY . '? LIMIT 0, ?', array($id_category, $rows));
 	}
 
-	public function getProposals($id_category, $rows)
+	public function getProposals($id_category, $order, $rows)
 	{
-		return DB::select(self::PROPOSALS_QUERY . '? LIMIT 0, ?', array($id_category, $rows));
+		return DB::select(self::PROPOSALS_QUERY . '? ORDER BY ? DESC LIMIT 0, ?', array($id_category, $order, $rows));
+	}
+
+	public function getTopCategory($id_category, $rows)
+	{
+		return DB::select();
 	}
 
 	/**

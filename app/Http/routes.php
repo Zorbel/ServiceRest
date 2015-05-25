@@ -102,4 +102,6 @@ Route::group(['prefix' => 'category'], function()
 	Route::get('/{id_category}/section/{rows}', 'CategoryController@getSections');
 
 	Route::get('/{id_category}/proposal/{rows}', 'CategoryController@getProposals');
+
+	Route::get('/{id_category}/proposal/{order}/{limit}', 'CategoryController@getProposals');
 });
