@@ -63,6 +63,8 @@ class ProposalController extends Controller {
 	 */
 	public function show($id)
 	{
+		DB::update('UPDATE `proposal` SET `views` = `views` + 1 WHERE `id` = ?', array($id));
+
 		return DB::select('SELECT `id`, `title`, `text`, `how`, `cost`,
 							(SELECT `file` FROM `media` WHERE `proposal`.`id_image` = `media`.`id`) AS `image`, `date`,
 							(SELECT `name` FROM `category` WHERE `proposal`.`id_category` = `category`.`id`) AS `category`,
