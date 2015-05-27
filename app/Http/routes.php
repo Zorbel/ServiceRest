@@ -86,6 +86,8 @@ Route::group(['prefix' => 'proposal'], function()
 
 	Route::get('/{id}', 'ProposalController@show');
 
+	Route::get('/user/{id}', 'ProposalController@showUserProposals');	
+
 	Route::get('/{id}/comment', 'CommentController@getProposalComment');
 
 	Route::post('/{id}/comment', 'CommentController@newProposalComment');

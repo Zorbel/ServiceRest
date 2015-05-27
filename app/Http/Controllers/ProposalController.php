@@ -39,10 +39,21 @@ class ProposalController extends Controller {
 		{
 			if (DB::insert('INSERT INTO `proposal` (`title`, `text`, `how`, `cost`, `id_category`, `id_image`, `date`, `id_user`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
 				array($input['title'], $input['text'], $input['how'], $input['cost'], $input['id_category'], $input['id_image'], date('Y-m-d H:i:s'), $input['id_user'])))
-				return ProposalController::show(DB::getPdo()->lastInsertId());
+				return "Ok";
+				//return ProposalController::show(DB::getPdo()->lastInsertId());
 			else
 				return "Error unexpected";
 		}
+	}
+
+	public function showUserProposals($id)
+	{
+		return DB::select('SELECT `id`, `title`, (SELECT `file` FROM `media` WHERE `proposal`.`id_image` = `media`.`id`) AS `id_image`, `views`, `likes`, `not_understood`, `dislikes`, `date`,
+							(SELECT `nickname` FROM `user` WHERE `proposal`.`id_user` = `user`.`id`) AS `user`,
+	 						(SELECT COUNT(*) FROM `comment` WHERE `comment`.`id_proposal` = `proposal`.`id`) AS `comments`
+	 						FROM `proposal`
+	 						WHERE `id_user` = ?
+	 						ORDER BY `date` DESC', array($id));
 	}
 
 	/**
