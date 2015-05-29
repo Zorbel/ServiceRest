@@ -42,7 +42,36 @@ class CategoryController extends Controller {
 
 	public function getProposalsByOrder($id_category, $order, $rows)
 	{
-		return DB::select(self::PROPOSALS_QUERY . '? ORDER BY ? DESC LIMIT 0, ?', array($id_category, $order, $rows));
+		switch ($order) {
+			case "date":
+				$results = DB::select(self::PROPOSALS_QUERY . '? ORDER BY `date` DESC LIMIT 0, ?', array($id_category, $rows));
+				break;
+
+			case "views":
+				$results = DB::select(self::PROPOSALS_QUERY . '? ORDER BY `views` DESC LIMIT 0, ?', array($id_category, $rows));
+				break;
+
+			case "likes":
+				$results = DB::select(self::PROPOSALS_QUERY . '? ORDER BY `likes` DESC LIMIT 0, ?', array($id_category, $rows));
+				break;
+				
+			case "dislikes":
+				$results = DB::select(self::PROPOSALS_QUERY . '? ORDER BY `dislikes` DESC LIMIT 0, ?', array($id_category, $rows));
+				break;
+							
+			case "not_understood":
+				$results = DB::select(self::PROPOSALS_QUERY . '? ORDER BY `not_understood` DESC LIMIT 0, ?', array($id_category, $rows));
+				break;
+			
+			case "comments":
+				$results = DB::select(self::PROPOSALS_QUERY . '? ORDER BY `comments` DESC LIMIT 0, ?', array($id_category, $rows));
+				break;
+				
+			default:
+				return "Invalid parameter";
+			}
+			
+		return $results;
 	}
 
 	/**

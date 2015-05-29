@@ -113,3 +113,10 @@ Route::group(['prefix' => 'category'], function()
 
 	Route::get('/{id_category}/proposal/{order}/{limit}', 'CategoryController@getProposalsByOrder');
 });
+
+Route::group(['prefix' => 'user'], function()
+{
+	Route::get('/{id}', 'UserController@getUser');
+
+	Route::post('/', 'UserController@setNickname');
+});
