@@ -55,9 +55,9 @@ class CommentController extends Controller {
 
 	public function newProposalComment($id_proposal)
 	{
-		$input = Request::only('id_user', 'text', 'id_category');
+		$input = Request::only('id_user', 'text');
 
-		if (is_null($id_proposal) || is_null($input['id_user']) || is_null($input['text']) || is_null($input['id_category']))
+		if (is_null($id_proposal) || is_null($input['id_user']) || is_null($input['text']))
 			return "Missing parameters";
 
 		else

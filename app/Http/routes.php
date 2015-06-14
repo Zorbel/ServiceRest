@@ -120,3 +120,11 @@ Route::group(['prefix' => 'user'], function()
 
 	Route::post('/', 'UserController@setNickname');
 });
+
+Route::group(['prefix' => 'favorite'], function()
+{
+	Route::post('/', 'FavoriteController@store');
+
+	Route::delete('/{id}', 'FavoriteController@delete');
+
+});

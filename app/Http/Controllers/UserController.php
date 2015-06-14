@@ -3,7 +3,8 @@
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use DB;
-use Illuminate\Http\Request;
+//use Illuminate\Http\Request;
+use Request;
 
 class UserController extends Controller {
 
@@ -13,7 +14,7 @@ class UserController extends Controller {
 
 		if (count($result) == 0)
 		{
-			DB::insert('INSERT INTO `user` (`id`, `email`, `password`) VALUES (?, ?, ?)', array($id, $id . "@democritis.com", UserController::randomPassword()));
+			DB::insert('INSERT INTO `user` (`id`, `email`, `password`) VALUES (?, ?, ?)', array($id, $id . "@democritics.com", UserController::randomPassword()));
 			return DB::select('SELECT * FROM `user` WHERE `id` = ?', array($id));
 		}
 
@@ -24,7 +25,7 @@ class UserController extends Controller {
 	{
 		$input = Request::only(`id_user`, `new_nickname`);
 
-		DB::update('UPDATE `user` SET `nickname` = '?' WHERE `id` = ?;', array($input['new_nickname'], $input['id_user']));
+		DB::update('UPDATE `user` SET `nickname` = ? WHERE `id` = ?;', array($input['new_nickname'], $input['id_user']));
 	}
 
 	private function randomPassword() {
