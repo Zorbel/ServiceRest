@@ -17,7 +17,7 @@ class TopController extends Controller {
 	const PROPOSALS_QUERY = 'SELECT `id`, `title`, (SELECT `file` FROM `media` WHERE `proposal`.`id_image` = `media`.`id`) AS `id_image`, `views`, `likes`, `not_understood`, `dislikes`, `date`,
 							(SELECT `nickname` FROM `user` WHERE `proposal`.`id_user` = `user`.`id`) AS `user`,
 	 						(SELECT COUNT(*) FROM `comment` WHERE `comment`.`id_proposal` = `proposal`.`id`) AS `comments`
-	 						FROM `proposal`
+	 						FROM `proposal` WHERE `id_wave` IS NULL
 	 						ORDER BY ';
 	/**
 	 * Display a listing of the resource.
@@ -94,11 +94,12 @@ class TopController extends Controller {
 				$results = DB::select(self::PROPOSALS_QUERY . '`comments` DESC LIMIT 0, ?', array($rows));
 				break;
 
-			case "colaborative"
+			case "colaborative":
 				$results = DB::select('SELECT `id`, `title`, (SELECT `file` FROM `media` WHERE `proposal`.`id_image` = `media`.`id`) AS `id_image`, `views`, `likes`, `not_understood`, `dislikes`, `date`,
 							(SELECT `nickname` FROM `user` WHERE `proposal`.`id_user` = `user`.`id`) AS `user`,
 	 						(SELECT COUNT(*) FROM `comment` WHERE `comment`.`id_proposal` = `proposal`.`id`) AS `comments`
 	 						FROM `proposal` WHERE `id_wave` IS NOT NULL ORDER BY `date` DESC LIMIT 0, ?', array($rows));
+				break;
 
 			default:
 				return "Invalid parameter";

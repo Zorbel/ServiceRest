@@ -98,11 +98,7 @@ Route::group(['prefix' => 'proposal'], function()
 
 	Route::post('/', 'ProposalController@create');
 
-	Route::put('/{id}/like', 'ProposalController@addLike');
-
-	Route::put('/{id}/dislike', 'ProposalController@addDislike');
-
-	Route::put('/{id}/notUnderstood', 'ProposalController@addNotUnderstood');
+	Route::put('/', 'ProposalController@setOpinion');
 });
 
 // Route categories

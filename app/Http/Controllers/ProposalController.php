@@ -146,7 +146,49 @@ class ProposalController extends Controller {
 		//
 	}
 
-	public function getOpinion()
+	private function newOpinion($id_proposal, $opinion)
+	{
+		switch ($opinion) {
+			case "like":
+				ProposalController::addLike($id_proposal);
+				break;
+
+			case "dislike":
+				ProposalController::addDislike($id_proposal);
+				break;
+
+			case "not_understood":
+				ProposalController::addNotUnderstood($id_proposal);
+				break;
+			
+			default:
+				# code...
+				break;
+		}
+	}
+
+	private function delOldOpinion($id_proposal, $opinion)
+	{
+		switch ($opinion) {
+			case "like":
+				ProposalController::delLike($id_proposal);
+				break;
+
+			case "dislike":
+				ProposalController::delDislike($id_proposal);
+				break;
+
+			case "not_understood":
+				ProposalController::delNotUnderstood($id_proposal);
+				break;
+			
+			default:
+				# code...
+				break;
+		}
+	}
+
+	public function setOpinion()
 	{
 		$input = Request::only(`id_user`, `id_proposal`, `opinion`);
 
@@ -159,14 +201,22 @@ class ProposalController extends Controller {
 				{
 					DB::insert('INSERT INTO `opinion`(`id_user`, `id_proposal`, `opinion`) VALUES (?, ?, ?)', 
 						array($input['id_user'], $input['id_proposal'], $input['opinion']));
-					return ProposalController::addLike($input['id_proposal']);
+					ProposalController::addLike($input['id_proposal']);
 				}
 				else
 				{
 					DB::delete('DELETE FROM `opinion` WHERE `id_user` = ? AND `id_proposal` = ?', 
 						array($input['id_user'], $input['id_proposal']));
-					return ProposalController::delLike($input['id_proposal']);
+					ProposalController::delOldOpinion($result[0]->id_proposal, $result[0]->opinion);					
+
+					if (strcmp($result[0]->opinion, "like") !== 0)
+					{
+						DB::insert('INSERT INTO `opinion`(`id_user`, `id_proposal`, `opinion`) VALUES (?, ?, ?)', array($input['id_user'], $input['id_proposal'], $input['opinion']));
+						ProposalController::newOpinion($input['id_proposal'], $input['opinion']);
+					}
+
 				}
+				return ProposalController::getCounters($input['id_proposal']);				
 				break;
 
 			case "dislike":
@@ -174,14 +224,22 @@ class ProposalController extends Controller {
 				{
 					DB::insert('INSERT INTO `opinion`(`id_user`, `id_proposal`, `opinion`) VALUES (?, ?, ?)', 
 						array($input['id_user'], $input['id_proposal'], $input['opinion']));
-					return ProposalController::addDislike($input['id_proposal']);
+					ProposalController::addDislike($input['id_proposal']);
 				}
 				else
 				{
 					DB::delete('DELETE FROM `opinion` WHERE `id_user` = ? AND `id_proposal` = ?', 
 						array($input['id_user'], $input['id_proposal']));
-					return ProposalController::delLike($input['id_proposal']);
+					ProposalController::delOldOpinion($result[0]->id_proposal, $result[0]->opinion);					
+
+					if (strcmp($result[0]->opinion, "dislike") !== 0)
+					{
+						DB::insert('INSERT INTO `opinion`(`id_user`, `id_proposal`, `opinion`) VALUES (?, ?, ?)', array($input['id_user'], $input['id_proposal'], $input['opinion']));
+						ProposalController::newOpinion($input['id_proposal'], $input['opinion']);
+					}
+
 				}
+				return ProposalController::getCounters($input['id_proposal']);
 				break;
 			
 			case "not_understood":
@@ -189,14 +247,23 @@ class ProposalController extends Controller {
 				{
 					DB::insert('INSERT INTO `opinion`(`id_user`, `id_proposal`, `opinion`) VALUES (?, ?, ?)', 
 						array($input['id_user'], $input['id_proposal'], $input['opinion']));
-					return ProposalController::addNotUnderstood($input['id_proposal']);
+					ProposalController::addNotUnderstood($input['id_proposal']);
 				}
 				else
 				{
 					DB::delete('DELETE FROM `opinion` WHERE `id_user` = ? AND `id_proposal` = ?', 
 						array($input['id_user'], $input['id_proposal']));
-					return ProposalController::delNotUnderstood($input['id_proposal']);
+
+					ProposalController::delOldOpinion($result[0]->id_proposal, $result[0]->opinion);
+
+					if (strcmp($result[0]->opinion, "not_understood") !== 0)
+					{
+						DB::insert('INSERT INTO `opinion`(`id_user`, `id_proposal`, `opinion`) VALUES (?, ?, ?)', array($input['id_user'], $input['id_proposal'], $input['opinion']));
+						ProposalController::newOpinion($input['id_proposal'], $input['opinion']);
+					}
+
 				}
+				return ProposalController::getCounters($input['id_proposal']);				
 				break;
 
 			default:
@@ -215,13 +282,11 @@ class ProposalController extends Controller {
 	private function addLike($id_proposal)
 	{
 		DB::update('update `proposal` SET `likes` = `likes` + 1 WHERE `id` = ?', array($id_proposal));
-		return ProposalController::getCounters($id_proposal);
 	}
 
 	private function delLike($id_proposal)
 	{
 		DB::update('update `proposal` SET `likes` = `likes` - 1 WHERE `id` = ?', array($id_proposal));
-		return ProposalController::getCounters($id_proposal);
 	}
 
 	/**
@@ -236,13 +301,11 @@ class ProposalController extends Controller {
 	private function addDislike($id_proposal)
 	{
 		DB::update('update `proposal` SET `dislikes` = `dislikes` + 1 WHERE `id` = ?', array($id_proposal));
-		return ProposalController::getCounters($id_proposal);
 	}
 
 	private function delDislike($id_proposal)
 	{
 		DB::update('update `proposal` SET `dislikes` = `dislikes` - 1 WHERE `id` = ?', array($id_proposal));
-		return ProposalController::getCounters($id_proposal);
 	}
 
 	/**
@@ -257,13 +320,11 @@ class ProposalController extends Controller {
 	private function addNotUnderstood($id_proposal)
 	{
 		DB::update('update `proposal` SET `not_understood` = `not_understood` + 1 WHERE `id` = ?', array($id_proposal));
-		return ProposalController::getCounters($id_proposal);
 	}
 
 	private function delNotUnderstood($id_proposal)
 	{
 		DB::update('update `proposal` SET `not_understood` = `not_understood` - 1 WHERE `id` = ?', array($id_proposal));
-		return ProposalController::getCounters($id_proposal);
 	}
 
 	/**
