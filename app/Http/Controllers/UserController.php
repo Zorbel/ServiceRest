@@ -41,6 +41,33 @@ class UserController extends Controller {
     	return implode($pass); //turn the array into a string
 	}
 
+	public function getUserPreferences()
+	{
+		$input = Request::only(`id_user`, `section`, `id_political_party`, `id_proposal`);
+
+		if (is_null($input['id_proposal']))
+		{
+			$isFavorite = DB::select('SELECT * FROM `favorites` WHERE `id_user` = ? AND `section` = ? AND `id_political_party` = ?', 
+				array($input['id_user'], $input['section'], $input['id_political_party']));
+
+			if (empty($isFavorite))
+				$isFavorite = false;
+			else
+				$isFavorite = true;
+
+			$userOpinion = DB::select('SELECT * FROM `opinion` WHERE `id_user` = ? AND `section` = ? AND `id_political_party` = ?', 
+				array($input['id_user'], $input['section'], $input['id_political_party']));
+
+			if (empty($userOpinion))
+				$userOpinion = "";
+			else
+				$userOpinion = $userOpinion[0]->opinion;
+
+			return array("isFavorite" => $isFavorite, "opinion" => $userOpinion);
+		}
+
+	}
+
 	/**
 	 * Display a listing of the resource.
 	 *

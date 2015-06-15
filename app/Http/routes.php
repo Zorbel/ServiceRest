@@ -86,7 +86,9 @@ Route::group(['prefix' => 'proposal'], function()
 
 	Route::get('/{id}', 'ProposalController@show');
 
-	Route::get('/user/{id}', 'ProposalController@showUserProposals');	
+	Route::get('/user/{id}', 'ProposalController@showUserProposals');
+
+	Route::get('/colaborative/user/{id}', 'ProposalController@showUserColaborativeProposals');
 
 	Route::get('/{id}/comment', 'CommentController@getProposalComment');
 
@@ -119,12 +121,16 @@ Route::group(['prefix' => 'user'], function()
 	Route::get('/{id}', 'UserController@getUser');
 
 	Route::post('/', 'UserController@setNickname');
+
+	Route::post('/preferences', 'UserController@getUserPreferences');
 });
 
 Route::group(['prefix' => 'favorite'], function()
 {
+	Route::post('/{type}', 'FavoriteController@showUserFavorites');
+
 	Route::post('/', 'FavoriteController@store');
 
-	Route::delete('/{id}', 'FavoriteController@delete');
+	Route::delete('/{id}', 'FavoriteController@destroy');
 
 });

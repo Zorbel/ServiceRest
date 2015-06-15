@@ -66,6 +66,9 @@ class CategoryController extends Controller {
 			case "comments":
 				$results = DB::select(self::PROPOSALS_QUERY . '? ORDER BY `comments` DESC LIMIT 0, ?', array($id_category, $rows));
 				break;
+
+			case "colaborative"
+				$results = DB::select(self::PROPOSALS_QUERY . '? AND `id_wave` IS NOT NULL ORDER BY `date` DESC LIMIT 0, ?', array($id_category, $rows));
 				
 			default:
 				return "Invalid parameter";

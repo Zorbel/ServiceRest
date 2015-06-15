@@ -8,6 +8,17 @@ use Request;
 
 class FavoriteController extends Controller {
 
+	const PROPOSALS_QUERY = 'SELECT `id`, `title`, (SELECT `file` FROM `media` WHERE `proposal`.`id_image` = `media`.`id`) AS `id_image`, `views`, `likes`, `not_understood`, `dislikes`, `date`,
+						(SELECT `nickname` FROM `user` WHERE `proposal`.`id_user` = `user`.`id`) AS `user`,
+ 						(SELECT COUNT(*) FROM `comment` WHERE `comment`.`id_proposal` = `proposal`.`id`) AS `comments`
+ 						FROM `proposal`, `favorites`';
+
+	const SECTIONS_QUERY = 'SELECT `section`.`id_political_party`, `section`.`section`, `title`,
+							(SELECT `name` FROM `category` WHERE `category`.`id` = `section`.`id_category`) AS `category`,
+							`likes`, `not_understood`, `dislikes`, `views`, 
+							(SELECT COUNT(*) FROM `comment` WHERE `section`.`id_political_party` = `comment`.`id_political_party` AND `section`.`section` = `comment`.`section`) AS `comments`
+					   		FROM `section`, `favorites`';
+
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -39,31 +50,30 @@ class FavoriteController extends Controller {
 
 		if (is_null($input['id_proposal']))
 		{
-			if (is_null($input['id_user']) || is_null($input['section']) || is_null($input['id_political_party']))
-				return Response::make("Missing parameters", 400);
+			if (is_null($input['id_user']) || is_null($input['section']) || is_null($input['id_political_party'] || is_null($input['id_proposal'])))
+				return response("Missing parameters", 400);
 
 			else
 			{
 				DB::insert('INSERT INTO `favorites` (`id_user`, `section`, `id_political_party`) VALUES (?, ?, ?)', 
 					array($input['id_user'], $input['section']), $input['id_political_party']);
-				return Response::make("Created", 201);
+				return response("Created", 201);
 			}
 
 		} elseif (is_null($input['section']) && is_null($input['id_political_party'])) {
 			
 			if (is_null($input['id_user']) || is_null($input['id_proposal']))
-				return Response::make("Missing parameters", 400);
+				return response("Missing parameters", 401);
 			
 			else
 			{
 				DB::insert('INSERT INTO `favorites` (`id_user`, `id_proposal`) VALUES (?, ?)', array($input['id_user'], $input['id_proposal']));
-				//return Response::make("Created", 201);
-				return "ok";
+				return response("Created", 201);
 			}
 		}
 
 		else
-			return Response::make("Unexpected error", 500);
+			return response("Unexpected error", 500);
 	}
 
 	/**
@@ -111,19 +121,43 @@ class FavoriteController extends Controller {
 
 		switch ($id) {
 			case "section":
-				DB::delete("DELETE FROM `favorites` WHERE `id_user` = ? AND `section` = ? AND `id_political_party` = ?", array($input['id_user'], $input['section'], $input['id_political_party']));
-				return Response::make("OK", 200);
+				DB::delete('DELETE FROM `favorites` WHERE `id_user` = ? AND `section` = ? AND `id_political_party` = ?', array($input['id_user'], $input['section'], $input['id_political_party']));
+				return response("Accepted", 200);
 
 			case "proposal":
-				DB::delete("DELETE FROM `favorites` WHERE `id_user` = ? AND `id_proposal` = ?", array($input['id_user'], $input['proposal']));
-				return Response::make("OK", 200);
+				DB::delete('DELETE FROM `favorites` WHERE `id_user` = ? AND `id_proposal` = ?', array($input['id_user'], $input['id_proposal']));
+				return response("Accepted", 200);
 
 			default:
 				# code...
 				break;
 		}
 
-		return Response::make("Unexpected error", 500);
+		return response("Unexpected error", 500);
+	}
+
+	public function showUserFavorites($type)
+	{
+		$input = Request::only('id_user');
+
+		switch ($type) {
+			case "proposals":
+				return DB::select(self::PROPOSALS_QUERY . ' WHERE `favorites`.`id_proposal` = `proposal`.`id` AND `favorites`.`id_user` = ?', array($input['id_user']));
+
+			case "sections":
+				return DB::select(self::SECTIONS_QUERY . ' WHERE `favorites`.`section` = `section`.`section` AND `favorites`.`id_political_party` = `section`.`id_political_party` AND `favorites`.`id_user` = ?'
+					, array($input['id_user']));
+			
+			default:
+				# code...
+				break;
+		}
+		return response("Unexpected error", 500);
+	}
+
+	public function isFavorite()
+	{
+		
 	}
 
 }

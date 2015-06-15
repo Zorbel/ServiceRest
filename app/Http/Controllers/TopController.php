@@ -19,12 +19,6 @@ class TopController extends Controller {
 	 						(SELECT COUNT(*) FROM `comment` WHERE `comment`.`id_proposal` = `proposal`.`id`) AS `comments`
 	 						FROM `proposal`
 	 						ORDER BY ';
-
-	const COMPARATIVES_QUERY = 	'SELECT `id`, `title`, `image`, `date`, `views`, `likes`, `not_understood`, `dislikes`,
-	 							(SELECT COUNT(*) FROM `comment` WHERE `comment`.`id_comparative` = `comparative`.`id`) AS `comments`
-	 							FROM `comparative`
-	 							ORDER BY ';
-
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -99,7 +93,13 @@ class TopController extends Controller {
 			case "comments":
 				$results = DB::select(self::PROPOSALS_QUERY . '`comments` DESC LIMIT 0, ?', array($rows));
 				break;
-				
+
+			case "colaborative"
+				$results = DB::select('SELECT `id`, `title`, (SELECT `file` FROM `media` WHERE `proposal`.`id_image` = `media`.`id`) AS `id_image`, `views`, `likes`, `not_understood`, `dislikes`, `date`,
+							(SELECT `nickname` FROM `user` WHERE `proposal`.`id_user` = `user`.`id`) AS `user`,
+	 						(SELECT COUNT(*) FROM `comment` WHERE `comment`.`id_proposal` = `proposal`.`id`) AS `comments`
+	 						FROM `proposal` WHERE `id_wave` IS NOT NULL ORDER BY `date` DESC LIMIT 0, ?', array($rows));
+
 			default:
 				return "Invalid parameter";
 			}
@@ -143,6 +143,24 @@ class TopController extends Controller {
 		}
 
 		return $list;
+	}
+
+	public function showUserFavorites($type)
+	{
+		$input = Request::only('id_user');
+
+		switch ($type) {
+			case "proposals":
+				# code...
+				break;
+
+			case "sections":
+				break;
+			
+			default:
+				# code...
+				break;
+		}
 	}
 
 	/**
