@@ -32,27 +32,25 @@ class ProposalController extends Controller {
 	{
 		$input = Request::only(`title`, `text`, `how`, `cost`, `id_category`, `id_user`, `id_image`, `id_wave`);
 
-		if (is_null($input['title']) || is_null($input['text']) || is_null($input['how']) || is_null($input['cost']) || is_null($input['id_category']) || is_null($input['id_user']) || is_null($input['id_image']))
+		if (is_null($input['title']) || is_null($input['text']) || is_null($input['id_category']) || is_null($input['id_user']) || is_null($input['id_image']))
 			return "Missing parameters";
 
 		else
 		{
-			if (is_null($input['id_wave']))
+			if (empty($input['id_wave']))
 			{
-				if (DB::insert('INSERT INTO `proposal` (`title`, `text`, `id_category`, `id_image`, `date`, `id_user`, `id_wave`) VALUES (?, ?, ?, ?, ?, ?, ?)',
-					array($input['title'], $input['text'], $input['how'], $input['cost'], $input['id_category'], $input['id_image'], date('Y-m-d H:i:s'), $input['id_user']), $input['id_wave']))
-					return "ok";
-					//return ProposalController::show(DB::getPdo()->lastInsertId());
+				if (DB::insert('INSERT INTO `proposal` (`title`, `text`, `how`, `cost`, `id_category`, `id_image`, `date`, `id_user`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+					array($input['title'], $input['text'], $input['how'], $input['cost'], $input['id_category'], $input['id_image'], date('Y-m-d H:i:s'), $input['id_user'])))
+					return "Ok";
 				else
 					return "Error unexpected";
 			}
 
 			else
 			{
-				if (DB::insert('INSERT INTO `proposal` (`title`, `text`, `how`, `cost`, `id_category`, `id_image`, `date`, `id_user`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-					array($input['title'], $input['text'], $input['how'], $input['cost'], $input['id_category'], $input['id_image'], date('Y-m-d H:i:s'), $input['id_user'])))
-					return "Ok";
-					//return ProposalController::show(DB::getPdo()->lastInsertId());
+				if (DB::insert('INSERT INTO `proposal` (`title`, `text`, `id_category`, `id_image`, `date`, `id_user`, `id_wave`) VALUES (?, ?, ?, ?, ?, ?, ?)',
+					array($input['title'], $input['text'], $input['id_category'], $input['id_image'], date('Y-m-d H:i:s'), $input['id_user'], $input['id_wave'])))
+					return "ok";
 				else
 					return "Error unexpected";
 			}
@@ -63,7 +61,7 @@ class ProposalController extends Controller {
 	{
 		return DB::select('SELECT `id`, `title`, (SELECT `file` FROM `media` WHERE `proposal`.`id_image` = `media`.`id`) AS `id_image`, `views`, `likes`, `not_understood`, `dislikes`, `date`,
 							(SELECT `nickname` FROM `user` WHERE `proposal`.`id_user` = `user`.`id`) AS `user`,
-	 						(SELECT COUNT(*) FROM `comment` WHERE `comment`.`id_proposal` = `proposal`.`id`) AS `comments`
+	 						(SELECT COUNT(*) FROM `comment` WHERE `comment`.`id_proposal` = `proposal`.`id`) AS `comments`, `id_wave`
 	 						FROM `proposal`
 	 						WHERE `id_user` = ? AND `id_wave` IS NULL
 	 						ORDER BY `date` DESC', array($id));
@@ -73,7 +71,7 @@ class ProposalController extends Controller {
 	{
 		return DB::select('SELECT `id`, `title`, (SELECT `file` FROM `media` WHERE `proposal`.`id_image` = `media`.`id`) AS `id_image`, `views`, `likes`, `not_understood`, `dislikes`, `date`,
 					(SELECT `nickname` FROM `user` WHERE `proposal`.`id_user` = `user`.`id`) AS `user`,
-						(SELECT COUNT(*) FROM `comment` WHERE `comment`.`id_proposal` = `proposal`.`id`) AS `comments`
+						(SELECT COUNT(*) FROM `comment` WHERE `comment`.`id_proposal` = `proposal`.`id`) AS `comments`, `id_wave`
 						FROM `proposal`
 						WHERE `id_user` = ? AND `id_wave` IS NOT NULL
 						ORDER BY `date` DESC', array($id));

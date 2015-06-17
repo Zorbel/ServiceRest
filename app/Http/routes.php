@@ -50,18 +50,12 @@ Route::group(['prefix' => 'politicalParty'], function()
 		Route::get('/{section}', 'SectionController@show');
 
 		Route::group(['prefix' => '/{section}'], function()
-			{
+			{				
 				Route::get('/like', 'SectionController@getLikes');
-
-				Route::put('/like', 'SectionController@addLike');
 
 				Route::get('/dislike', 'SectionController@getDislikes');
 
-				Route::put('/dislike', 'SectionController@addDislike');
-
 				Route::get('/notUnderstood', 'SectionController@getNotUnderstoods');
-
-				Route::put('/notUnderstood', 'SectionController@addNotUnderstood');
 			});
 
 		// Route Comments
@@ -77,6 +71,8 @@ Route::group(['prefix' => 'politicalParty'], function()
 
 	});
 });
+
+Route::put('/', 'SectionController@setOpinion');
 
 // Route Proposals
 

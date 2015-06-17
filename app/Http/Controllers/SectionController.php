@@ -3,7 +3,8 @@
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use DB; // Need for DB calls
-use Illuminate\Http\Request;
+//use Illuminate\Http\Request;
+use Request;
 
 class SectionController extends Controller {
 
@@ -99,49 +100,189 @@ class SectionController extends Controller {
 		//
 	}
 
-	/**
-	*/
-	public function getLikes($id_political_party, $section)
+	private function newOpinion($id_political_party, $section, $opinion)
 	{
-		return DB::select('select `likes` FROM `section` WHERE `id_political_party` = ? AND `section` = ?', array($id_political_party, $section));
+		switch ($opinion) {
+			case "like":
+				SectionController::addLike($id_political_party, $section);
+				break;
+
+			case "dislike":
+				SectionController::addDislike($id_political_party, $section);
+				break;
+
+			case "not_understood":
+				SectionController::addNotUnderstood($id_political_party, $section);
+				break;
+			
+			default:
+				# code...
+				break;
+		}
+	}
+
+	private function delOldOpinion($id_political_party, $section, $opinion)
+	{
+		switch ($opinion) {
+			case "like":
+				SectionController::delLike($id_political_party, $section);
+				break;
+
+			case "dislike":
+				SectionController::delDislike($id_political_party, $section);
+				break;
+
+			case "not_understood":
+				SectionController::delNotUnderstood($id_political_party, $section);
+				break;
+			
+			default:
+				# code...
+				break;
+		}
+	}
+
+	public function setOpinion()
+	{
+		$input = Request::only(`id_user`, `id_political_party`, `section`, `opinion`);
+
+		$result = DB::select('SELECT * FROM `opinion` WHERE `id_user` = ? AND `id_political_party` = ? AND `section` = ?', 
+			array($input['id_user'], $input['id_political_party'], $input['section']));
+
+		switch ($input['opinion']) {
+			case "like":
+				if (empty($result))
+				{
+					DB::insert('INSERT INTO `opinion` (`id_user`, `id_political_party`, `section`, `opinion`) VALUES (?, ?, ?, ?)', 
+						array($input['id_user'], $input['id_political_party'], $input['section'], $input['opinion']));
+					SectionController::addLike($input['id_political_party'], $input['section']);
+				}
+				else
+				{
+					DB::delete('DELETE FROM `opinion` WHERE `id_user` = ? AND `id_political_party` = ? AND `section` = ?', 
+						array($input['id_user'], $input['id_political_party'], $input['section']));
+					SectionController::delOldOpinion($result[0]->id_political_party, $result[0]->section, $result[0]->opinion);
+					
+					if (strcmp($result[0]->opinion, "like") !== 0)
+					{
+						DB::insert('INSERT INTO `opinion` (`id_user`, `id_political_party`, `section`, `opinion`) VALUES (?, ?, ?, ?)', 
+							array($input['id_user'], $input['id_political_party'], $input['section'], $input['opinion']));
+						SectionController::newOpinion($input['id_political_party'], $input['section'], $input['opinion']);
+					}
+
+				}
+				return SectionController::getCounters($input['id_political_party'], $input['section']);				
+				break;
+
+			case "dislike":
+				if (empty($result))
+				{
+					DB::insert('INSERT INTO `opinion` (`id_user`, `id_political_party`, `section`, `opinion`) VALUES (?, ?, ?, ?)', 
+						array($input['id_user'], $input['id_political_party'], $input['section'], $input['opinion']));
+					SectionController::addDislike($input['id_political_party'], $input['section']);
+				}
+				else
+				{
+					DB::delete('DELETE FROM `opinion` WHERE `id_user` = ? AND `id_political_party` = ? AND `section` = ?', 
+						array($input['id_user'], $input['id_political_party'], $input['section']));
+					SectionController::delOldOpinion($result[0]->id_political_party, $result[0]->section, $result[0]->opinion);
+
+					if (strcmp($result[0]->opinion, "dislike") !== 0)
+					{
+						DB::insert('INSERT INTO `opinion` (`id_user`, `id_political_party`, `section`, `opinion`) VALUES (?, ?, ?, ?)', 
+							array($input['id_user'], $input['id_political_party'], $input['section'], $input['opinion']));
+						SectionController::newOpinion($input['id_political_party'], $input['section'], $input['opinion']);
+					}
+
+				}
+				return SectionController::getCounters($input['id_political_party'], $input['section']);
+				break;
+			
+			case "not_understood":
+				if (empty($result))
+				{
+					DB::insert('INSERT INTO `opinion` (`id_user`, `id_political_party`, `section`, `opinion`) VALUES (?, ?, ?, ?)', 
+						array($input['id_user'], $input['id_political_party'], $input['section'], $input['opinion']));
+					SectionController::addNotUnderstood($input['id_political_party'], $input['section']);
+				}
+				else
+				{
+					DB::delete('DELETE FROM `opinion` WHERE `id_user` = ? AND `id_political_party` = ? AND `section` = ?', 
+						array($input['id_user'], $input['id_political_party'], $input['section']));
+					SectionController::delOldOpinion($result[0]->id_political_party, $result[0]->section, $result[0]->opinion);					
+
+					if (strcmp($result[0]->opinion, "not_understood") !== 0)
+					{
+						DB::insert('INSERT INTO `opinion` (`id_user`, `id_political_party`, `section`, `opinion`) VALUES (?, ?, ?, ?)', 
+							array($input['id_user'], $input['id_political_party'], $input['section'], $input['opinion']));
+						SectionController::newOpinion($input['id_political_party'], $input['section'], $input['opinion']);
+					}
+
+				}
+				return SectionController::getCounters($input['id_political_party'], $input['section']);
+				break;
+
+			default:
+				# code...
+				break;
+		}
 	}
 
 	/**
 	*/
-	public function addLike($id_political_party, $section)
+	public function getLikes($id_political_party, $section)
 	{
-		DB::update('update `section` SET `likes` = `likes` + 1 WHERE `id_political_party` = ? and `section` = ?', array($id_political_party, $section));
-		return SectionController::getCounters($id_political_party, $section);
+		return DB::select('SELECT `likes` FROM `section` WHERE `id_political_party` = ? AND `section` = ?', array($id_political_party, $section));
+	}
+
+	/**
+	*/
+	private function addLike($id_political_party, $section)
+	{
+		DB::update('UPDATE `section` SET `likes` = `likes` + 1 WHERE `id_political_party` = ? and `section` = ?', array($id_political_party, $section));
+	}
+
+	private function delLike($id_political_party, $section)
+	{
+		DB::update('UPDATE `section` SET `likes` = `likes` - 1 WHERE `id_political_party` = ? and `section` = ?', array($id_political_party, $section));
 	}
 
 	/**
 	*/
 	public function getDislikes($id_political_party, $section)
 	{
-		return DB::select('select `dislikes` FROM `section` WHERE `id_political_party` = ? AND `section` = ?', array($id_political_party, $section));
+		return DB::select('SELECT `dislikes` FROM `section` WHERE `id_political_party` = ? AND `section` = ?', array($id_political_party, $section));
 	}
 
 	/**
 	*/
-	public function addDislike($id_political_party, $section)
+	private function addDislike($id_political_party, $section)
 	{
-		DB::update('update `section` SET `dislikes` = `dislikes` + 1 WHERE `id_political_party` = ? and `section` = ?', array($id_political_party, $section));
-		return SectionController::getCounters($id_political_party, $section);
+		DB::update('UPDATE `section` SET `dislikes` = `dislikes` + 1 WHERE `id_political_party` = ? and `section` = ?', array($id_political_party, $section));
+	}
+
+	private function delDislike($id_political_party, $section)
+	{
+		DB::update('UPDATE `section` SET `dislikes` = `dislikes` - 1 WHERE `id_political_party` = ? and `section` = ?', array($id_political_party, $section));
 	}
 
 	/**
 	*/
 	public function getNotUnderstoods($id_political_party, $section)
 	{
-		return DB::select('select `not_understood` FROM `section` WHERE `id_political_party` = ? AND `section` = ?', array($id_political_party, $section));
+		return DB::select('SELECT `not_understood` FROM `section` WHERE `id_political_party` = ? AND `section` = ?', array($id_political_party, $section));
 	}
 
 	/**
 	*/
-	public function addNotUnderstood($id_political_party, $section)
+	private function addNotUnderstood($id_political_party, $section)
 	{
-		DB::update('update `section` SET `not_understood` = `not_understood` + 1 WHERE `id_political_party` = ? and `section` = ?', array($id_political_party, $section));
-		return SectionController::getCounters($id_political_party, $section);
+		DB::update('UPDATE `section` SET `not_understood` = `not_understood` + 1 WHERE `id_political_party` = ? and `section` = ?', array($id_political_party, $section));
+	}
+
+	private function delNotUnderstood($id_political_party, $section)
+	{
+		DB::update('UPDATE `section` SET `not_understood` = `not_understood` - 1 WHERE `id_political_party` = ? and `section` = ?', array($id_political_party, $section));
 	}
 
 	/**

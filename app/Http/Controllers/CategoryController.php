@@ -16,7 +16,7 @@ class CategoryController extends Controller {
 
 	const PROPOSALS_QUERY = 'SELECT `id`, `title`, (SELECT `file` FROM `media` WHERE `proposal`.`id_image` = `media`.`id`) AS `id_image`, `views`, `likes`, `not_understood`, `dislikes`, `date`,
 							(SELECT `nickname` FROM `user` WHERE `proposal`.`id_user` = `user`.`id`) AS `user`,
-	 						(SELECT COUNT(*) FROM `comment` WHERE `comment`.`id_proposal` = `proposal`.`id`) AS `comments`
+	 						(SELECT COUNT(*) FROM `comment` WHERE `comment`.`id_proposal` = `proposal`.`id`) AS `comments`, `id_wave`
 	 						FROM `proposal`
 	 						WHERE `id_category` = ';
 
@@ -67,12 +67,18 @@ class CategoryController extends Controller {
 				$results = DB::select(self::PROPOSALS_QUERY . '? ORDER BY `comments` DESC LIMIT 0, ?', array($id_category, $rows));
 				break;
 
-			case "colaborative"
+			case "colaborative":
 				$results = DB::select(self::PROPOSALS_QUERY . '? AND `id_wave` IS NOT NULL ORDER BY `date` DESC LIMIT 0, ?', array($id_category, $rows));
+				break;
 				
 			default:
 				return "Invalid parameter";
 			}
+			
+		foreach ($results as $value) {
+			if (is_null($value->id_wave))
+				$value->id_wave = "";
+		}
 			
 		return $results;
 	}
