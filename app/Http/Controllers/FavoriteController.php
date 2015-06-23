@@ -10,8 +10,8 @@ class FavoriteController extends Controller {
 
 	const PROPOSALS_QUERY = 'SELECT `id`, `title`, (SELECT `file` FROM `media` WHERE `proposal`.`id_image` = `media`.`id`) AS `id_image`, `views`, `likes`, `not_understood`, `dislikes`, `date`,
 						(SELECT `nickname` FROM `user` WHERE `proposal`.`id_user` = `user`.`id`) AS `user`,
- 						(SELECT COUNT(*) FROM `comment` WHERE `comment`.`id_proposal` = `proposal`.`id`) AS `comments`
- 						FROM `proposal`, `favorites`';
+ 						(SELECT COUNT(*) FROM `comment` WHERE `comment`.`id_proposal` = `proposal`.`id`) AS `comments`, `id_wave`
+	 					FROM `proposal` , `favorites` WHERE `proposal`.`id_wave` IS NULL';
 
 	const SECTIONS_QUERY = 'SELECT `section`.`id_political_party`, `section`.`section`, `title`,
 							(SELECT `name` FROM `category` WHERE `category`.`id` = `section`.`id_category`) AS `category`,
@@ -169,17 +169,24 @@ class FavoriteController extends Controller {
 
 		switch ($type) {
 			case "proposals":
-				return DB::select(self::PROPOSALS_QUERY . ' WHERE `favorites`.`id_proposal` = `proposal`.`id` AND `favorites`.`id_user` = ?', array($input['id_user']));
+				$results =  DB::select(self::PROPOSALS_QUERY . ' AND `favorites`.`id_proposal` = `proposal`.`id` AND `favorites`.`id_user` = ?', array($input['id_user']));
+
+				foreach ($results as $value) {
+					if (is_null($value->id_wave))
+					$value->id_wave = "";
+				}
+				break;
 
 			case "sections":
-				return DB::select(self::SECTIONS_QUERY . ' WHERE `favorites`.`section` = `section`.`section` AND `favorites`.`id_political_party` = `section`.`id_political_party` AND `favorites`.`id_user` = ?'
+				$results = DB::select(self::SECTIONS_QUERY . ' WHERE `favorites`.`section` = `section`.`section` AND `favorites`.`id_political_party` = `section`.`id_political_party` AND `favorites`.`id_user` = ?'
 					, array($input['id_user']));
+				break;
 			
 			default:
-				# code...
-				break;
+				return response("Unexpected error", 500);
 		}
-		return response("Unexpected error", 500);
+
+		return $results;
 	}
 
 	public function isFavorite()
