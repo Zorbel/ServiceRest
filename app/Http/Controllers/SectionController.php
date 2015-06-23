@@ -46,9 +46,16 @@ class SectionController extends Controller {
 	 */
 	public function show($id_political_party, $section)
 	{
-		$result1 = DB::select('	SELECT `section`, `title`, `text`, `likes`, `not_understood`, `dislikes`
-								FROM `section` 
-							   	WHERE `id_political_party` = ? AND `section` = ?', array($id_political_party, $section));
+		$input = Request::only(`id_user`);
+
+		$result1 = DB::select('SELECT `section`, `title`, `text`, `likes`, `not_understood`, `dislikes`,
+		 (SELECT `id_user` FROM `favorites` WHERE `id_user` = ? AND `id_political_party` = ? AND `section` = ?) AS `favorite`
+			FROM `section` WHERE `id_political_party` = ? AND `section` = ?', array($input['id_user'], $id_political_party, $section, $id_political_party, $section));
+
+		if (is_null($result1[0]->favorite))
+			$result1[0]->favorite = "no";
+		else
+			$result1[0]->favorite = "yes";
 
 		if (is_null($result1[0]->text))
 			$result1[0]->text = "";
@@ -63,8 +70,8 @@ class SectionController extends Controller {
 					 "likes" => $result1[0]->likes, 
 					 "not_understood" => $result1[0]->not_understood, 
 					 "dislikes" => $result1[0]->dislikes, 
-					 "comments" => $result2[0]->comments
-					 );
+					 "comments" => $result2[0]->comments,
+					 "favorite" => $result1[0]->favorite);
 	}
 
 	/**

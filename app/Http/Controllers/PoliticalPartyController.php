@@ -15,7 +15,7 @@ class PoliticalPartyController extends Controller {
 	 */
 	public function index()
 	{
-		$results = DB::select('select * FROM `political_party` ORDER BY `name`');
+		$results = DB::select('SELECT * FROM `political_party` ORDER BY `name`');
 		$i = 0;
 
 		foreach ($results as $value) {

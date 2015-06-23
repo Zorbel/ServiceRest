@@ -95,6 +95,8 @@ class ProposalController extends Controller {
 	 */
 	public function show($id)
 	{
+		$input = Request::only(`id_user`);
+
 		DB::update('UPDATE `proposal` SET `views` = `views` + 1 WHERE `id` = ?', array($id));
 
 		$results = DB::select('SELECT `id`, `title`, `text`, `how`, `cost`,
@@ -102,11 +104,17 @@ class ProposalController extends Controller {
 							(SELECT `name` FROM `category` WHERE `proposal`.`id_category` = `category`.`id`) AS `category`,
 							(SELECT `nickname` FROM `user` WHERE `proposal`.`id_user`= `user`.`id`) AS `user`,
 							`views`, `likes`, `not_understood`, `dislikes`, 
-							(SELECT COUNT(*) FROM `comment` WHERE `proposal`.`id` = `comment`.`id_proposal`) AS `comments`, `id_wave`
-							FROM `proposal` WHERE `proposal`.`id` = ?', array($id));
+							(SELECT COUNT(*) FROM `comment` WHERE `proposal`.`id` = `comment`.`id_proposal`) AS `comments`, `id_wave`,
+							(SELECT `id_user` FROM `favorites` WHERE `id_user` = ? AND `id_proposal` = ?) AS `favorite`
+							FROM `proposal` WHERE `proposal`.`id` = ?', array($input['id_user'], $id, $id));
 
 		if (is_null($results[0]->id_wave))
 			$results[0]->id_wave = "";
+
+		if (is_null($results[0]->favorite))
+			$results[0]->favorite = "no";
+		else
+			$results[0]->favorite = "yes";
 
 		return $results;
 	}

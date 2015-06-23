@@ -47,7 +47,7 @@ Route::group(['prefix' => 'politicalParty'], function()
 	{
 		Route::get('/', 'SectionController@index');
 
-		Route::get('/{section}', 'SectionController@show');
+		Route::post('/{section}', 'SectionController@show');
 
 		Route::group(['prefix' => '/{section}'], function()
 			{				
@@ -80,7 +80,7 @@ Route::group(['prefix' => 'proposal'], function()
 {
 	Route::get('/', 'ProposalController@index');
 
-	Route::get('/{id}', 'ProposalController@show');
+	Route::post('/{id}', 'ProposalController@show');
 
 	Route::get('/user/{id}', 'ProposalController@showUserProposals');
 
@@ -122,7 +122,4 @@ Route::group(['prefix' => 'favorite'], function()
 	Route::post('/{type}', 'FavoriteController@showUserFavorites');
 
 	Route::post('/', 'FavoriteController@store');
-
-	Route::delete('/{id}', 'FavoriteController@destroy');
-
 });

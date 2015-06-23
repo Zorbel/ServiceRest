@@ -50,14 +50,27 @@ class FavoriteController extends Controller {
 
 		if (is_null($input['id_proposal']))
 		{
-			if (is_null($input['id_user']) || is_null($input['section']) || is_null($input['id_political_party'] || is_null($input['id_proposal'])))
+			if (is_null($input['id_user']) || is_null($input['section']) || is_null($input['id_political_party']))
 				return response("Missing parameters", 400);
 
 			else
 			{
-				DB::insert('INSERT INTO `favorites` (`id_user`, `section`, `id_political_party`) VALUES (?, ?, ?)', 
-					array($input['id_user'], $input['section']), $input['id_political_party']);
-				return response("Created", 201);
+				$results = DB::select('SELECT * FROM `favorites` WHERE `id_user` = ? AND `id_political_party` = ? AND `section` = ?', 
+					array($input['id_user'], $input['id_political_party'], $input['section']));
+
+				if (empty($results))
+				{
+					DB::insert('INSERT INTO `favorites` (`id_user`, `section`, `id_political_party`) VALUES (?, ?, ?)', 
+						array($input['id_user'], $input['section'], $input['id_political_party']));
+					return response("Created", 201);
+				}
+
+				else
+				{
+					DB::delete('DELETE FROM `favorites` WHERE `id_user` = ? AND `section` = ? AND `id_political_party` = ?', 
+						array($input['id_user'], $input['section'], $input['id_political_party']));
+					return response("Deleted", 201);
+				}
 			}
 
 		} elseif (is_null($input['section']) && is_null($input['id_political_party'])) {
@@ -67,8 +80,22 @@ class FavoriteController extends Controller {
 			
 			else
 			{
-				DB::insert('INSERT INTO `favorites` (`id_user`, `id_proposal`) VALUES (?, ?)', array($input['id_user'], $input['id_proposal']));
-				return response("Created", 201);
+				$results = DB::select('SELECT * FROM `favorites` WHERE `id_user` = ? AND `id_proposal` = ?', 
+					array($input['id_user'], $input['id_proposal']));
+
+				if (empty($results))
+				{
+					DB::insert('INSERT INTO `favorites` (`id_user`, `id_proposal`) VALUES (?, ?)', 
+						array($input['id_user'], $input['id_proposal']));
+					return response("Created", 201);
+				}
+
+				else
+				{
+					DB::delete('DELETE FROM `favorites` WHERE `id_user` = ? AND `id_proposal` = ?', 
+						array($input['id_user'], $input['id_proposal']));
+					return response("Deleted", 201);
+				}
 			}
 		}
 
